@@ -9,6 +9,7 @@ from flask_login import LoginManager, current_user
 from flask_socketio import SocketIO, disconnect, emit, join_room, leave_room
 
 from config import *
+import middleware
 from models import User
 from oauth import oauth, user
 
@@ -32,6 +33,10 @@ port = int(os.environ.get("PORT", 5000))
 
 # construct app
 app = Flask(__name__)
+
+if os.environ.get('USE_HTTPS', 'false').lower() == 'true':
+    app.wsgi_app = middleware.ForceHttps(app.wsgi_app)
+
 app.config["SECRET_KEY"] = secrets.token_urlsafe(16)
 app.register_blueprint(user)
 
