@@ -80,23 +80,6 @@
                     </div>
                     <div class="dropdown-menu" id="toolbar-dropdown-menu" role="menu">
                         <div class="dropdown-content">
-                            <div class="dropdown-item">
-                                <button id="canvas-background" class="button dropdown-item js-modal-trigger"
-                                    data-target="background-upload-modal">
-                                    <span class="icon">
-                                        <i class="fa-solid fa-image fa-fw"></i>
-                                    </span>
-                                    <span>Change Canvas Background</span>
-                                </button>
-                            </div>
-                            <div class="dropdown-item">
-                                <button id="canvas-orientation" class="button dropdown-item">
-                                    <span class="icon">
-                                        <i class="fa-solid fa-camera-rotate fa-fw"></i>
-                                    </span>
-                                    <span>Change Canvas Orientation</span>
-                                </button>
-                            </div>
                             {% with errors = get_flashed_messages(category_filter=["error"]) %}
                             {% if errors %}
                             <div class="dropdown-item">
@@ -119,6 +102,23 @@
                             </div>
                             {% endif %}
                             {% endwith %}
+                            <div class="dropdown-item">
+                                <button id="canvas-background" class="button dropdown-item js-modal-trigger"
+                                    data-target="background-upload-modal">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-image fa-fw"></i>
+                                    </span>
+                                    <span>Change Canvas Background</span>
+                                </button>
+                            </div>
+                            <div class="dropdown-item">
+                                <button id="canvas-orientation" class="button dropdown-item">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-camera-rotate fa-fw"></i>
+                                    </span>
+                                    <span>Change Canvas Orientation</span>
+                                </button>
+                            </div>
                             <a href="#" class="dropdown-item"></a>
                             <hr class="dropdown-divider">
                             <div class="dropdown-item">
