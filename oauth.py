@@ -86,7 +86,7 @@ def login_backup():
         user = User(id=uuid.uuid4())
         login_user(user)
         session["_username"] = username
-        flash(msgs[0], "success")
+        # flash(msgs[0], "success")
     else:
         flash(msgs[1], "error")
 
@@ -124,7 +124,7 @@ def authorize_discord():
             user_info = oauth.discord.get(quote_plus("users/@me"))
             session["_username"] = user_info["username"]
             session["_discord_user"] = user_info.json()
-            flash(msgs[0], "success")
+            # flash(msgs[0], "success")
         else:
             flash(msgs[1], "error")
     except:
