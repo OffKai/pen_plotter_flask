@@ -101,8 +101,6 @@ def authorize_discord():
     if session.get("_flashes") is not None:
         session["_flashes"].clear()
 
-    print(session.get("locale"))
-
     if session.get("locale") == "ja":
         msgs = [
             "ログインに成功しました！",  #
@@ -121,9 +119,15 @@ def authorize_discord():
         if is_staff() or is_guest():
             user = User(id=uuid.uuid4())
             login_user(user)
-            user_info = oauth.discord.get(quote_plus("users/@me"))
-            session["_username"] = user_info["username"]
-            session["_discord_user"] = user_info.json()
+            user_info = oauth.discord.get(quote_plus("users/@me")).json()
+            username = user_info["username"]
+            usercode = user_info["discriminator"]
+            if int(usercode) > 0:
+                session["_username"] = f"{username}#{usercode}"
+            else:
+                session["_username"] = username
+
+            session["_discord_user"] = user_info
             # flash(msgs[0], "success")
         else:
             flash(msgs[1], "error")
