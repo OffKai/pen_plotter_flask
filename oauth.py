@@ -11,7 +11,6 @@ from flask import (
     request,
     session,
 )
-from flask_babel import gettext
 from flask_login import (
     login_required,
     login_user,
