@@ -33,11 +33,9 @@ DISCORD_CLIENT_SECRET = os.environ.get("DISCORD_CLIENT_SECRET")
 DISCORD_CLIENT_OAUTH2_SCOPES = "identify guilds.members.read"
 
 # (server id, role id)
-DISCORD_SERVER_WHITELIST = [
-    ("864267081255616542", "864276628237713459"),
-    ("1089761570713772153", "1089771478154743961"),
-    ("1114660019212910622", None)
-]
+# ("864267081255616542", "864276628237713459"),
+DISCORD_SERVER_WHITELIST = ["1089761570713772153",
+                            "1114660019212910622", "926205283649347594"]
 
 BASIC_LOGIN_DIGEST = os.environ.get("BASIC_LOGIN_DIGEST")
 
@@ -152,18 +150,10 @@ def logout():
 
 
 def is_authorized_user():
-    return any(has_server_role(sid, rid) for (sid, rid) in DISCORD_SERVER_WHITELIST)
+    return any(has_server_role(sid) for sid in DISCORD_SERVER_WHITELIST)
 
 
-def has_server_role(server_id, role_id):
-    resp = oauth.discord.get(quote_plus(f"users/@me/guilds/{server_id}/member"))
-    if resp.ok:
-        if role_id is None:
-            return True
-
-        member = resp.json()
-        for role in member["roles"]:
-            if role == role_id:
-                return True
-
-    return False
+def has_server_role(server_id):
+    resp = oauth.discord.get(quote_plus(
+        f"users/@me/guilds/{server_id}/member"))
+    return resp.ok
