@@ -11,7 +11,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import *
 from models import User
-from oauth import oauth, user
+#from oauth import oauth, user
+from sui import user
 
 
 def authenticated_only(f):
@@ -45,7 +46,7 @@ app.register_blueprint(user)
 
 app.jinja_env.globals["get_locale"] = get_locale
 
-oauth.init_app(app)
+#oauth.init_app(app)
 
 login_manager = LoginManager()
 login_manager.login_view = "login"
