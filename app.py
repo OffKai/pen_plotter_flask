@@ -12,7 +12,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from config import *
 from models import User
 #from oauth import oauth, user
-from sui import user
+from invites import user
 
 
 def authenticated_only(f):
