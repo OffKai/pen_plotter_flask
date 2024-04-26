@@ -4,7 +4,9 @@ from flask import (
     flash,
     redirect,
     render_template,
-    session
+    session,
+    make_response,
+    request
 )
 from flask_login import (
     login_user,
@@ -29,35 +31,24 @@ def generate_invite():
 
 @user.route("/login/invite/<invite_code>", methods=["GET"])
 def login_single_use_invite(invite_code):
-    
     if current_user.is_authenticated:
-        #print('in endpoint /<invite_code>: current user is already authenticated')
+        print("in endpoint /<invite_code>: current user is already authenticated")
         return redirect("/")
 
     # print('in endpoint /<invite_code>: code is ' + invite_code)
 
-    # previous approach: compare in uuid format
-    # strings are good enough for our purposes, and requires fewer formatting checks such as bad URLs
-    #
-    # foundFlag = False
-    # for i in range(INVITE_LIMIT):
-    #     if uuid.UUID(invite_code) == invite_codes[i]:
-    #         foundFlag = True
-    #         del invite_codes[i]
-    #         break
-    # if not foundFlag:
-    #     flash("error in login_single_use_invite()", "error")
-
     if invite_code in invite_codes:
         invite_codes.remove(invite_code)
         user = User(id=invite_code)
-        login_user(user)
-        session["_username"] = "single-use guest"
+        login_user(user, remember=True)
+        session["_username"] = invite_code
         flash("successfully used single-use invite: " + invite_code, "success")
+        resp = make_response(render_template("redirect.html"))
+        resp.set_cookie("authId", invite_code, max_age=604800, path="/")
+        return resp
     else:
         flash("error in login_single_use_invite() for code: " + invite_code, "error")
-
-    return redirect("/")
+        return redirect("/")
 
 
 @user.route("/logout")
