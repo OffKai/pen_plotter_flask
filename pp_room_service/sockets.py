@@ -1,24 +1,19 @@
-from flask import Flask, request, make_response, render_template
-from flask_socketio import SocketIO, join_room, leave_room
+from flask import request, render_template
+from flask_socketio import join_room
 from flask_httpauth import HTTPBasicAuth
+
+from app import app, socket
 
 USER_ID = "offkai_pp_uid"
 
-app = Flask(__name__)
-app.secret_key = "secret!"
 basic_auth = HTTPBasicAuth()
 basic_auth_users = { "oke_admin": "admin" }
-
-socket = SocketIO()
-socket.init_app(app)
-
-from pp_config.secrets import get_secret
 
 user_manifest = {}
 room_manifest = { "waiting": [], "room1": "", "room2": "", "room3": "" }
 
 def is_admin_token(token):
-    return token == get_secret("admin_token")
+    return token == "admin"
 
 def is_user_token(token):
     return token in user_manifest

@@ -20,7 +20,7 @@ from flask_login import (
 from werkzeug.security import check_password_hash
 
 from config import *
-from models import User
+from pp_auth.models import User
 
 
 DISCORD_API_BASE_URL = "https://discord.com/api/"
