@@ -1,8 +1,12 @@
-var socket = io();
 var user = "user" + Math.floor(Math.random() * 10);
 var currentRoom = "room1";
+var socket = io({
+    auth: {
+        token: sessionStorage.getItem("authId") || user
+    }
+});
 
-socket.on('connect', (sock) => {
+socket.on('connect', () => {
     console.log("connected");
     socket.emit('newUser', { user: user });
 });

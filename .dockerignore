@@ -1,2 +1,9 @@
+# git
 .github/
 .gitignore
+
+# python venv
+ppenv/
+
+# local svg store
+mount/

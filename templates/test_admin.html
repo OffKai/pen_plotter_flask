@@ -3,18 +3,25 @@
 
 <p>Hello Admin!</p>
 
+<p>Waiting Room: <div id="waiting"></div></p>
 <p>Room 1: <div id="users1"></div></p>
 <p>Room 2: <div id="users2"></div></p>
 <p>Room 3: <div id="users3"></div></p>
 
 <p>User: <input id="user" type="text" /></p>
-
 <p>
+    <button onclick="addUserToken()">Add user</button>
+    <button onclick="addUserTokens()">Add <b>ALL</b> users</button>
+</p>
+<p></p>
+<p>
+    <button onclick="moveUser(0)">Move to waiting room!</button>
     <button onclick="moveUser(1)">Move to room 1!</button>
     <button onclick="moveUser(2)">Move to room 2!</button>
     <button onclick="moveUser(3)">Move to room 3!</button>
 </p>
 <p>
+    <button onclick="pingRoom(0)">Ping to waiting room!</button>
     <button onclick="pingRoom(1)">Ping to room 1!</button>
     <button onclick="pingRoom(2)">Ping to room 2!</button>
     <button onclick="pingRoom(3)">Ping to room 3!</button>
