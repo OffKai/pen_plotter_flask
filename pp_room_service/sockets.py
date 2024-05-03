@@ -25,15 +25,6 @@ def verify_admin(username, password):
     else:
         return None
 
-@app.get("/")
-def user():
-    return render_template("test.html")
-
-@app.get("/admin")
-@basic_auth.login_required
-def admin():
-    return render_template("test_admin.html")
-
 @socket.on("connect")
 def user_connect(auth):
     print("User connected")

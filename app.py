@@ -1,10 +1,9 @@
 from functools import wraps
-import logging
 import mimetypes
 import os
 import secrets
 
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, request, session
 from flask_login import LoginManager, current_user
 from flask_socketio import SocketIO, disconnect
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -54,28 +53,11 @@ login_manager.init_app(app)
 socket = SocketIO()
 socket.init_app(app)
 
-import pp_room_service.old_sockets
+# import pp_room_service.old_sockets
 
 @login_manager.user_loader
 def load_user(id):
     return User(id)
-
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-
-@app.route("/en", methods=["GET", "POST"])
-def lang_en():
-    session["locale"] = "en"
-    return redirect("/")
-
-
-@app.route("/jp", methods=["GET", "POST"])
-def lang_jp():
-    session["locale"] = "ja"
-    return redirect("/")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template
 from flask_httpauth import HTTPBasicAuth
 
-bp = Blueprint('auth', __name__, url_prefix='/oke_pp_admin')
+bp = Blueprint('admin', __name__, url_prefix='/oke_pp_admin')
 
 basic_auth = HTTPBasicAuth()
 basic_auth_users = { "oke_admin": "admin" }
@@ -13,7 +13,7 @@ def verify_admin(username, password):
     else:
         return None
 
-@bp.route("/", methods=("GET"))
+@bp.route("/", methods=["GET"])
 @basic_auth.login_required
 def admin_page():
     return render_template("test_admin.html")
