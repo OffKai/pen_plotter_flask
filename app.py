@@ -10,8 +10,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import *
 from pp_auth.models import User
-from pp_auth.oauth import oauth, user
-
+from pp_auth.oauth import oauth
+from invites import user
 
 def authenticated_only(f):
     @wraps(f)
@@ -44,7 +44,7 @@ app.register_blueprint(user)
 
 app.jinja_env.globals["get_locale"] = get_locale
 
-oauth.init_app(app)
+#oauth.init_app(app)
 
 login_manager = LoginManager()
 login_manager.login_view = "login"
