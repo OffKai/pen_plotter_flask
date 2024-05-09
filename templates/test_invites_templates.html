@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div>
+  {% for g in guest_keys %}
+    <p>{{g}}</p>
+  {% endfor %}
+</div>
+
+{% endblock %}
