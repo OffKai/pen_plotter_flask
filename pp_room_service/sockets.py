@@ -82,7 +82,7 @@ def move_user(data):
     print(data)
     print(room_manifest)
     socket.emit("moveUser", data, to="admin")
-    socket.emit("moveUser", data, to=data["user"])
+    socket.emit("moveUser", (data["to"] != 0), to=data["user"])
 
 @socket.on("pingRoom", namespace="/admin")
 def ping_room(data):
