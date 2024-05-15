@@ -15,7 +15,6 @@ from flask_login import (
 )
 from config import *
 from pp_auth.models import User
-#import pp_files.templates_testdriver
 
 INVITE_LIMIT = 4
 invite_codes = []
