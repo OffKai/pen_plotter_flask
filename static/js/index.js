@@ -1042,6 +1042,20 @@ class App {
             }
         });
 
+        // admin pages
+        let copyButtons = document.querySelectorAll('.copy-invite-button')
+        copyButtons.forEach(function(b) {
+            b.addEventListener('click', function(event) {
+                navigator.clipboard.writeText(window.location.host + "/invite/" + b.dataset.slug)
+                .then(() => {
+                    alert('Copied to clipboard!\n\nDO NOT open this link yourself as staff. Send it to guest:\n' + b.dataset.guestname);
+                })
+                .catch((err) => {
+                    console.error('Error copying to clipboard:', err);
+                })
+            })
+        })
+
         // CTRL+Z, SHIFT+CTRL+Z, CTRL+Y
         document.addEventListener("keydown", (e) => {
             if (this.toolActive) {

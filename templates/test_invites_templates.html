@@ -42,18 +42,24 @@
                 <tr class="bg-white border-b">
                     <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap">
                         <div class="ps-3">
-                            <div class="text-base font-semibold">{{g}}</div>
+                            <div class="text-base font-semibold">{{g.name}}</div>
                         </div>  
                     </th>
                     <td class="px-6 py-4">
-                        <a href="/generate-invite" class="font-medium text-blue-600 hover:underline">
-                            Generate
-                        </a>
+                        {% if g.invite_slug == "" %}
+                            <a href="/generate-invite/{{g.id}}" class="font-medium text-blue-600 hover:underline">
+                                Generate
+                            </a>
+                        {% else %}
+                            /invite/{{g.invite_slug}}
+                        {% endif %}
                     </td>
                     <td class="px-6 py-4">
-                        <button type="button" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
-                            Copy
-                        </button>
+                        {% if g.invite_slug != "" %}
+                            <button type="button" data-slug="{{g.invite_slug}}" data-guestname="{{g.name}}" class="copy-invite-button focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-xs px-3 py-2 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+                                Copy
+                            </button>
+                        {% endif %}
                     </td>
                     <td class="px-6 py-4">
                         column 4
@@ -63,7 +69,8 @@
             </tbody>
         </table>
     </div>
-  
+
 </div>
+<canvas id="canvas" style="visibility: hidden"></canvas>
 
 {% endblock %}
