@@ -11,7 +11,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import *
 from pp_auth.models import User
-from pp_files.templates_test_driver import bp
+from pp_files.templates_controller import bp
 
 def authenticated_only(f):
     @wraps(f)

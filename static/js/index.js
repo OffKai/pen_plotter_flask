@@ -1048,7 +1048,7 @@ class App {
             b.addEventListener('click', function(event) {
                 navigator.clipboard.writeText(window.location.host + "/invite/" + b.dataset.slug)
                 .then(() => {
-                    alert('Copied to clipboard!\n\nDO NOT open this link yourself as staff. Send it to guest:\n' + b.dataset.guestname);
+                    alert('Copied to clipboard!\n\nDO NOT open this link yourself as staff. Send it to guest:\n\n' + b.dataset.guestname);
                 })
                 .catch((err) => {
                     console.error('Error copying to clipboard:', err);

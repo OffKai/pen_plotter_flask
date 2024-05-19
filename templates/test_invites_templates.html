@@ -27,13 +27,13 @@
                         Name
                     </th>
                     <th scope="col" class="px-6 py-3">
+                        In group session?
+                    </th>
+                    <th scope="col" class="px-6 py-3">
                         Invite Link
                     </th>
                     <th scope="col" class="px-6 py-3">
                         Copy
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Column 4
                     </th>
                 </tr>
             </thead>
@@ -45,6 +45,11 @@
                             <div class="text-base font-semibold">{{g.name}}</div>
                         </div>  
                     </th>
+                    <td class="px-6 py-4">
+                        {% if g.is_group %}
+                            yes
+                        {% endif %}
+                    </td>
                     <td class="px-6 py-4">
                         {% if g.invite_slug == "" %}
                             <a href="/generate-invite/{{g.id}}" class="font-medium text-blue-600 hover:underline">
@@ -60,9 +65,6 @@
                                 Copy
                             </button>
                         {% endif %}
-                    </td>
-                    <td class="px-6 py-4">
-                        column 4
                     </td>
                 </tr>
             {% endfor %}
