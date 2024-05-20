@@ -13,12 +13,12 @@ class Guest:
         else:
             self._group_code = int(group_code)
         self._orientation = orientation
-        self._invite_slug = ""              # not assigned until admin generates an invite via ui event
-        self._clients = []                  # tracks the same UUIDs given out to client cookies
+        self._invite_slug = None            # not assigned until admin generates an invite via ui event
+        self._auth_id = None                # tracks the same UUID given out to the client's cookie
 
-    # id: is an integer unique among the set of Guests
+    # id: is a number unique among the set of Guests
     # added so that there is something easy to put into unique URLs
-    # because "names" have whitespace and can be ordered differently when it's a group
+    # because "names" have whitespace and other formatting factors
     @property
     def id(self):
         return self._id
@@ -90,3 +90,11 @@ class Guest:
     @invite_slug.setter
     def invite_slug(self, invite_slug):
         self._invite_slug = invite_slug
+
+    @property
+    def auth_id(self):
+        return self._auth_id
+
+    @auth_id.setter
+    def auth_id(self, auth_id):
+        self._auth_id = auth_id

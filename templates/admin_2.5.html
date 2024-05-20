@@ -51,18 +51,21 @@
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
-                        {% if g.invite_slug == "" %}
+                        {% if g.invite_slug == None %}
+                            {% if g.auth_id != None %}
+                                <p class="text-red font-semibold">has been used</p>
+                            {% endif %}
                             <a href="/generate-invite/{{g.id}}" class="font-medium text-blue-600 hover:underline">
-                                Generate
+                                <p>generate new</p>
                             </a>
                         {% else %}
-                            /invite/{{g.invite_slug}}
+                            /login/{{g.invite_slug}}
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
-                        {% if g.invite_slug != "" %}
+                        {% if g.invite_slug != None %}
                             <button type="button" data-slug="{{g.invite_slug}}" data-guestname="{{g.name}}" class="copy-invite-button focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-xs px-3 py-2 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
-                                Copy
+                                copy
                             </button>
                         {% endif %}
                     </td>

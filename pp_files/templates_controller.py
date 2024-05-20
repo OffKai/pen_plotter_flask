@@ -1,13 +1,22 @@
 from flask import (
     Blueprint,
+    flash,
+    make_response,
+    redirect,
     render_template,
-    redirect
+    session
 )
-from pathlib import Path
+from flask_login import (
+    current_user,
+    login_user,
+    logout_user
+)
 import os
 import random
 import string
+import uuid
 from pp_files.guest import Guest
+from pp_auth.models import User
 
 bp = Blueprint("templates_controller", __name__)
 
@@ -25,11 +34,9 @@ templates = []
 # 5: group code          # '' or a number 0 to 3; only applies to multiple talents sharing the same session
 # 6: orientation         # encoded as {'h', 'v', ''} for whether the image is portrait landscape or n/a, respectively
 #
-# no header row
-#
-# all conversion of types is handled within the scope of the Guest class constructor
-#
-# there's little to no validity checking yet, so make sure outside of the program that the data source will give no errors
+# - no header row
+# - all conversion of types is handled within the scope of the Guest class constructor
+# - there's little to no validity checking yet, so make sure outside of the program that the data source will give no errors
 
 def load_templates():
     i = 0
@@ -62,20 +69,66 @@ def render_admin_page(day_in):
         day_code = day_in
     else:
         day_code = 4
-    return render_template("test_invites_templates.html", guest_data = get_templates_by_day(day_code))
+    return render_template("admin_2.5.html", guest_data = get_templates_by_day(day_code))
 
-@bp.route("/generate-invite/", defaults={"guest_id_in": 255}, methods=["GET"])
+@bp.route("/generate-invite/", defaults={"guest_id_in": None}, methods=["GET"])
 @bp.route("/generate-invite/<int:guest_id_in>", methods=["GET"])
 def generate_invite(guest_id_in):
-    current_day_tab = 3
+    current_day_tab = 4
+    if guest_id_in == None:
+        print("TODO: put flash() here")
+    else:
+        not_found_flag = True
+        for t in templates:
+            if t.id == guest_id_in:
+                if t.invite_slug == "" or t.invite_slug == None:
+                    t.invite_slug = get_random_slug()
+                current_day_tab = t.day
+                not_found_flag = False
+                break
+        if not_found_flag:
+            print("TODO: put flash() here")
+    return render_template("admin_2.5.html", guest_data = get_templates_by_day(current_day_tab))
+
+# should be eventually moved to a separate file, e.g. invites.py, but state is stored here
+# can do some stuff to connect them, but taking the quick and dirty solution to reduce risk of things going wrong
+@bp.route("/login/<invite_code>", methods=["GET"])
+def login_with_invite_link(invite_code):
+    if current_user.is_authenticated or invite_code == None or invite_code == "":
+        return redirect("/")
+
     not_found_flag = True
     for t in templates:
-        if t.id == guest_id_in:
-            if t.invite_slug == "":
-                t.invite_slug = get_random_slug()
+        if t.invite_slug == invite_code:
+            my_uuid = str(uuid.uuid4())
+            t.auth_id = my_uuid
+            t.invite_slug = None
+            my_user = User(id=t.id)
+            login_user(my_user, remember=True)
+            session["_username"] = t.name
             not_found_flag = False
-            current_day_tab = t.day
-            break
-    if not_found_flag:
-        print("TODO: put flash() here")
-    return render_template("test_invites_templates.html", guest_data = get_templates_by_day(current_day_tab))
+            resp = make_response(render_template("redirect.html"))
+            resp.set_cookie("auth_id", my_uuid, max_age=604800, path="/")
+            resp.set_cookie("front_template_filename", t.front_image, max_age=604800, path="/")
+            resp.set_cookie("back_template_filename", t.back_image, max_age=604800, path="/")
+            resp.set_cookie("template_orientation", t.orientation, max_age=604800, path="/")
+            return resp
+    #if not_found_flag:
+
+    flash("error in login_single_use_invite() for code: " + invite_code, "error")
+    return redirect("/")
+
+@bp.route("/logout")
+def logout():
+    if current_user.is_authenticated:
+        logout_user()
+        if "_username" in session:
+            session.pop("_username")
+        resp = make_response(render_template("redirect.html"))
+        resp.set_cookie("auth_id", "", max_age=604800, path="/")
+        resp.set_cookie("front_template_filename", "", max_age=604800, path="/")
+        resp.set_cookie("back_template_filename", "", max_age=604800, path="/")
+        resp.set_cookie("template_orientation", "v", max_age=604800, path="/")
+        return resp
+
+    return redirect("/")

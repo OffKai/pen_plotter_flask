@@ -846,8 +846,24 @@ class App {
         this.canvas = canvas
         this.context = context
         this.transform = new DOMMatrix()
+
         this.background = new Image()
-        this.orient = Orient.Portrait;
+        this.orient = Orient.Portrait
+
+        const cookiesArray = decodeURIComponent(document.cookie).split("; ")
+        cookiesArray.forEach((cookie) => {
+            let cookiePieces = cookie.split("=")
+            if (cookiePieces[0] === "front_template_filename") {
+                this.frontTemplateFilename = cookiePieces[1].slice(1, -1)
+                this.background.src = "/static/images/guest_templates/" + this.frontTemplateFilename
+            }
+            else if (cookiePieces[0] === "back_template_filename") {
+                this.backTemplateFilename = cookiePieces[1].slice(1, -1)
+            }
+            else if (cookiePieces[0] === "template_orientation" && cookiePieces[1] === "h") {
+                this.orient = Orient.Landscape
+            }
+        })
 
         this.setCanvasPenColor("#000000")
         this.resizeCanvas()
@@ -1041,20 +1057,6 @@ class App {
                 this.flipCanvasOrientation();
             }
         });
-
-        // admin pages
-        let copyButtons = document.querySelectorAll('.copy-invite-button')
-        copyButtons.forEach(function(b) {
-            b.addEventListener('click', function(event) {
-                navigator.clipboard.writeText(window.location.host + "/invite/" + b.dataset.slug)
-                .then(() => {
-                    alert('Copied to clipboard!\n\nDO NOT open this link yourself as staff. Send it to guest:\n\n' + b.dataset.guestname);
-                })
-                .catch((err) => {
-                    console.error('Error copying to clipboard:', err);
-                })
-            })
-        })
 
         // CTRL+Z, SHIFT+CTRL+Z, CTRL+Y
         document.addEventListener("keydown", (e) => {
@@ -1401,6 +1403,20 @@ class App {
         return point.transform(transform)
     }
 }
+
+// admin pages
+let copyButtons = document.querySelectorAll('.copy-invite-button')
+copyButtons.forEach(function(b) {
+    b.addEventListener('click', function(event) {
+        navigator.clipboard.writeText(window.location.host + "/login/" + b.dataset.slug)
+        .then(() => {
+            alert('Copied to clipboard!\n\nDO NOT open this link yourself as staff. Send it to guest:\n\n' + b.dataset.guestname);
+        })
+        .catch((err) => {
+            console.error('Error copying to clipboard:', err);
+        })
+    })
+})
 
 function perpendicularDistance(p, a, b) {
     let ab = b.sub(a)
