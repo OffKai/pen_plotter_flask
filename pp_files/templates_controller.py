@@ -64,7 +64,7 @@ def get_random_slug(length=4):
 load_templates()
 
 basic_auth = HTTPBasicAuth()
-basic_auth_users = { "oke_admin": "weareanormalconvention" }
+basic_auth_users = { "oke_admin": "iscutepassiton14" }
 
 @basic_auth.verify_password
 def verify_admin(username, password):
