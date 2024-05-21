@@ -6,6 +6,7 @@ from flask import (
     render_template,
     session
 )
+from flask_httpauth import HTTPBasicAuth
 from flask_login import (
     current_user,
     login_user,
@@ -62,8 +63,19 @@ def get_random_slug(length=4):
 
 load_templates()
 
+basic_auth = HTTPBasicAuth()
+basic_auth_users = { "oke_admin": "weareanormalconvention" }
+
+@basic_auth.verify_password
+def verify_admin(username, password):
+    if username in basic_auth_users and password == basic_auth_users[username]:
+        return username
+    else:
+        return None
+
 @bp.route("/admin/2.5/", defaults={"day_in": 4}, methods=["GET"])
 @bp.route("/admin/2.5/<int:day_in>", methods=["GET"])
+@basic_auth.login_required
 def render_admin_page(day_in):
     if day_in >= 0 and day_in <= 2:
         day_code = day_in
@@ -73,6 +85,7 @@ def render_admin_page(day_in):
 
 @bp.route("/generate-invite/", defaults={"guest_id_in": None}, methods=["GET"])
 @bp.route("/generate-invite/<int:guest_id_in>", methods=["GET"])
+@basic_auth.login_required
 def generate_invite(guest_id_in):
     current_day_tab = 4
     if guest_id_in == None:
