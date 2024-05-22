@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="absolute w-screen h-screen flex flex-col justify-center items-center bg-[#484848]">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 overflow-scroll">
+
+        {% for g in guest_data %}
+            <figure class="max-w-xs">
+                <img class="h-auto max-w-xs rounded-lg" src="/static/images/guest_templates/{{g.front_image}}" alt="">
+                <figcaption class="mt-2 text-sm text-center text-white">{{g.name}}</figcaption>
+            </figure>
+        {% endfor %}
+
+    </div>
+</div>
+<canvas id="canvas" style="visibility: hidden"></canvas>
+
+{% endblock %}

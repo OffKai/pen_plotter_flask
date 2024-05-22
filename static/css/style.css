@@ -5,10 +5,6 @@ body {
     -ms-overflow-style: none;
 }
 
-::-webkit-scrollbar {
-    display: none;
-}
-
 #grid {
     width: 100dvw;
     height: 100dvh;

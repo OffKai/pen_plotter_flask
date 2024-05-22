@@ -10,6 +10,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import *
 from pp_auth.models import User
+from pp_files.templates_controller import bp
 
 def authenticated_only(f):
     @wraps(f)
@@ -38,6 +39,7 @@ port = int(os.environ.get("PORT", 5000))
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1)
 app.config["SECRET_KEY"] = secrets.token_urlsafe(16)
+app.register_blueprint(bp)
 
 app.jinja_env.globals["get_locale"] = get_locale
 
