@@ -103,6 +103,11 @@ def generate_invite(guest_id_in):
             print("TODO: put flash() here")
     return render_template("admin_2.5.html", guest_data = get_templates_by_day(current_day_tab))
 
+@bp.route("/test/gallery", methods=["GET"])
+@basic_auth.login_required
+def render_gallery_page():
+    return render_template("gallery.html", guest_data = get_templates_by_day(4))
+
 # should be eventually moved to a separate file, e.g. invites.py, but state is stored here
 # can do some stuff to connect them, but taking the quick and dirty solution to reduce risk of things going wrong
 @bp.route("/login/<invite_code>", methods=["GET"])
