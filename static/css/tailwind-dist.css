@@ -1260,11 +1260,6 @@ input[type="range"]::-ms-fill-lower {
   background-color: rgb(126 58 242 / var(--tw-bg-opacity));
 }
 
-.dark\:text-gray-400:is(.dark *) {
-  --tw-text-opacity: 1;
-  color: rgb(156 163 175 / var(--tw-text-opacity));
-}
-
 .dark\:hover\:bg-purple-700:hover:is(.dark *) {
   --tw-bg-opacity: 1;
   background-color: rgb(108 43 217 / var(--tw-bg-opacity));

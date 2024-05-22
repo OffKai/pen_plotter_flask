@@ -19,7 +19,7 @@ import uuid
 from pp_files.guest import Guest
 from pp_auth.models import User
 
-bp = Blueprint("templates_controller", __name__)
+templates_blueprint = Blueprint("templates_blueprint", __name__)
 
 templates = []
 
@@ -73,8 +73,8 @@ def verify_admin(username, password):
     else:
         return None
 
-@bp.route("/admin/2.5/", defaults={"day_in": 4}, methods=["GET"])
-@bp.route("/admin/2.5/<int:day_in>", methods=["GET"])
+@templates_blueprint.route("/admin/2.5/", defaults={"day_in": 4}, methods=["GET"])
+@templates_blueprint.route("/admin/2.5/<int:day_in>", methods=["GET"])
 @basic_auth.login_required
 def render_admin_page(day_in):
     if day_in >= 0 and day_in <= 2:
@@ -83,8 +83,8 @@ def render_admin_page(day_in):
         day_code = 4
     return render_template("admin_2.5.html", guest_data = get_templates_by_day(day_code))
 
-@bp.route("/generate-invite/", defaults={"guest_id_in": None}, methods=["GET"])
-@bp.route("/generate-invite/<int:guest_id_in>", methods=["GET"])
+@templates_blueprint.route("/generate-invite/", defaults={"guest_id_in": None}, methods=["GET"])
+@templates_blueprint.route("/generate-invite/<int:guest_id_in>", methods=["GET"])
 @basic_auth.login_required
 def generate_invite(guest_id_in):
     current_day_tab = 4
@@ -103,14 +103,14 @@ def generate_invite(guest_id_in):
             print("TODO: put flash() here")
     return render_template("admin_2.5.html", guest_data = get_templates_by_day(current_day_tab))
 
-@bp.route("/test/gallery", methods=["GET"])
+@templates_blueprint.route("/test/gallery", methods=["GET"])
 @basic_auth.login_required
 def render_gallery_page():
     return render_template("gallery.html", guest_data = get_templates_by_day(4))
 
-# should be eventually moved to a separate file, e.g. invites.py, but state is stored here
+# should be eventually moved to a separate file, e.g. invites.py, but state is stored in this file (templates variable at top scope)
 # can do some stuff to connect them, but taking the quick and dirty solution to reduce risk of things going wrong
-@bp.route("/login/<invite_code>", methods=["GET"])
+@templates_blueprint.route("/login/<invite_code>", methods=["GET"])
 def login_with_invite_link(invite_code):
     if current_user.is_authenticated or invite_code == None or invite_code == "":
         return redirect("/")
@@ -136,12 +136,15 @@ def login_with_invite_link(invite_code):
     flash("error in login_single_use_invite() for code: " + invite_code, "error")
     return redirect("/")
 
-@bp.route("/logout")
+@templates_blueprint.route("/logout")
 def logout():
     if current_user.is_authenticated:
         logout_user()
         if "_username" in session:
             session.pop("_username")
+        if "_discord_user" in session:
+            session.pop("_discord_user")
+
         resp = make_response(render_template("redirect.html"))
         resp.set_cookie("auth_id", "", max_age=604800, path="/")
         resp.set_cookie("front_template_filename", "", max_age=604800, path="/")

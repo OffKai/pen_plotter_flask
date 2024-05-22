@@ -56,10 +56,10 @@ oauth.register(
     },
 )
 
-user = Blueprint("user", __name__)
+oauth_blueprint = Blueprint("oauth_blueprint", __name__)
 
 
-@user.route("/login/discord", methods=["POST"])
+@oauth_blueprint.route("/login/discord", methods=["POST"])
 def login_discord():
     if current_user.is_authenticated:
         return redirect("/")
@@ -68,7 +68,7 @@ def login_discord():
     return oauth.discord.authorize_redirect(redirect_url)
 
 
-@user.route("/login/basic", methods=["POST"])
+@oauth_blueprint.route("/login/basic", methods=["POST"])
 def login_backup():
     if current_user.is_authenticated:
         return redirect("/")
@@ -95,7 +95,7 @@ def login_backup():
     return redirect("/")
 
 
-@user.route("/authorize/discord")
+@oauth_blueprint.route("/authorize/discord")
 def authorize_discord():
     if current_user.is_authenticated:
         return redirect("/")
@@ -139,16 +139,16 @@ def authorize_discord():
     return redirect("/")
 
 
-@user.route("/logout")
-def logout():
-    if current_user.is_authenticated:
-        logout_user()
-        if "_username" in session:
-            session.pop("_username")
-        if "_discord_user" in session:
-            session.pop("_discord_user")
+# @user.route("/logout")
+# def logout():
+#     if current_user.is_authenticated:
+#         logout_user()
+#         if "_username" in session:
+#             session.pop("_username")
+#         if "_discord_user" in session:
+#             session.pop("_discord_user")
 
-    return redirect("/")
+#     return redirect("/")
 
 
 def is_authorized_user():
