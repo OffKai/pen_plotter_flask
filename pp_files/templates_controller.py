@@ -6,22 +6,32 @@ from flask import (
     render_template,
     session
 )
-from flask_httpauth import HTTPBasicAuth
+from flask_httpauth import HTTPDigestAuth
 from flask_login import (
     current_user,
     login_user,
     logout_user
 )
+from math import floor
 import os
 import random
 import string
 import uuid
-from pp_files.guest import Guest
+import yaml
+
+from pp_config.secrets import get_secret
+from pp_auth.models import Guest
 from pp_auth.models import User
+from pp_room_service.guest_list import (
+    add_guest_to_guest_list, 
+    get_guest, 
+    get_guests_for_day, 
+    generate_slug_for_guest, 
+    authenticate_slug,
+    print_guest_list
+)
 
 bp = Blueprint("templates_controller", __name__)
-
-templates = []
 
 # load_templates():
 #
@@ -46,107 +56,75 @@ def load_templates():
     with open(data_path) as fp:
         for line in fp:
             cells = line.split(",")
-            templates.append(Guest(i, cells[0], cells[1], cells[2], cells[3], cells[4], cells[5], cells[6]))
+            add_guest_to_guest_list(Guest(i, cells[0], cells[1], cells[2], cells[3], cells[4], cells[5], cells[6]))
             i += 1
-
-def get_templates_by_day(day_in):
-    # this is a copy, so it doesn't mutate the templates variable at top scope
-    filtered_result = []
-    for t in templates:
-        if int(t.day) == int(day_in) or day_in == 4:
-            filtered_result.append(t)
-    return filtered_result
-
-def get_random_slug(length=4):
-    return ''.join(random.choice(string.ascii_lowercase) for i in range(length))
-
 
 load_templates()
 
-basic_auth = HTTPBasicAuth()
-basic_auth_users = { "oke_admin": "iscutepassiton14" }
+auth = HTTPDigestAuth()
+auth_users = yaml.safe_load(str(get_secret("admin_auth")))
 
-@basic_auth.verify_password
-def verify_admin(username, password):
-    if username in basic_auth_users and password == basic_auth_users[username]:
-        return username
-    else:
-        return None
+@auth.get_password
+def verify_admin(username):
+    return auth_users.get(username, None)
 
 @bp.route("/admin/2.5/", defaults={"day_in": 4}, methods=["GET"])
 @bp.route("/admin/2.5/<int:day_in>", methods=["GET"])
-@basic_auth.login_required
+@auth.login_required
 def render_admin_page(day_in):
-    if day_in >= 0 and day_in <= 2:
-        day_code = day_in
-    else:
-        day_code = 4
-    return render_template("admin_2.5.html", guest_data = get_templates_by_day(day_code))
+    day_code = floor(day_in) if day_in >= 0 and day_in < 3 else 4
+    return render_template("admin_2.5.html", guest_data = get_guests_for_day(day_code))
 
 @bp.route("/generate-invite/", defaults={"guest_id_in": None}, methods=["GET"])
 @bp.route("/generate-invite/<int:guest_id_in>", methods=["GET"])
-@basic_auth.login_required
-def generate_invite(guest_id_in):
+@auth.login_required
+def generate_invite(guest_name_in):
     current_day_tab = 4
-    if guest_id_in == None:
-        print("TODO: put flash() here")
+    if guest_name_in == None:
+        return None
     else:
-        not_found_flag = True
-        for t in templates:
-            if t.id == guest_id_in:
-                if t.invite_slug == "" or t.invite_slug == None:
-                    t.invite_slug = get_random_slug()
-                current_day_tab = t.day
-                not_found_flag = False
-                break
-        if not_found_flag:
-            print("TODO: put flash() here")
-    return render_template("admin_2.5.html", guest_data = get_templates_by_day(current_day_tab))
+        generate_slug_for_guest(guest_name_in)
+    return render_template("admin_2.5.html", guest_data = get_guests_for_day(current_day_tab))
 
 @bp.route("/test/gallery", methods=["GET"])
-@basic_auth.login_required
+@auth.login_required
 def render_gallery_page():
-    return render_template("gallery.html", guest_data = get_templates_by_day(4))
+    print_guest_list()
+    return render_template("gallery.html", guest_data = get_guests_for_day(4))
 
-# should be eventually moved to a separate file, e.g. invites.py, but state is stored here
-# can do some stuff to connect them, but taking the quick and dirty solution to reduce risk of things going wrong
 @bp.route("/login/<invite_code>", methods=["GET"])
 def login_with_invite_link(invite_code):
     if current_user.is_authenticated or invite_code == None or invite_code == "":
         return redirect("/")
 
-    not_found_flag = True
-    for t in templates:
-        if t.invite_slug == invite_code:
-            my_uuid = str(uuid.uuid4())
-            t.auth_id = my_uuid
-            t.invite_slug = None
-            my_user = User(id=t.id)
-            login_user(my_user, remember=True)
-            session["_username"] = t.name
-            not_found_flag = False
-            resp = make_response(render_template("redirect.html"))
-            resp.set_cookie("auth_id", my_uuid, max_age=604800, path="/")
-            resp.set_cookie("front_template_filename", t.front_image, max_age=604800, path="/")
-            resp.set_cookie("back_template_filename", t.back_image, max_age=604800, path="/")
-            resp.set_cookie("template_orientation", t.orientation, max_age=604800, path="/")
-            return resp
-    #if not_found_flag:
+    guest_name, auth_id = authenticate_slug(invite_code)
+    if guest_name is None or auth_id is None:
+        return redirect("/")
+    
+    guest = get_guest(guest_name)
+    my_user = User(id=auth_id)
+    session["_username"] = guest_name
+    login_user(my_user, remember=True)
 
-    flash("error in login_single_use_invite() for code: " + invite_code, "error")
-    return redirect("/")
+    resp = make_response(redirect("/"))
+    resp.set_cookie("auth_id", auth_id, max_age=604800, path="/")
+    resp.set_cookie("front_template_filename", guest.front_image, max_age=604800, path="/")
+    resp.set_cookie("back_template_filename", guest.back_image, max_age=604800, path="/")
+    resp.set_cookie("template_orientation", guest.orientation, max_age=604800, path="/")
+    return resp
 
 @bp.route("/logout")
 def logout():
-    if current_user.is_authenticated:
-        logout_user()
-        if "_username" in session:
-            session.pop("_username")
-        resp = make_response(render_template("redirect.html"))
-        resp.set_cookie("auth_id", "", max_age=604800, path="/")
-        resp.set_cookie("front_template_filename", "", max_age=604800, path="/")
-        resp.set_cookie("back_template_filename", "", max_age=604800, path="/")
-        resp.set_cookie("template_orientation", "v", max_age=604800, path="/")
-        return resp
+    if not current_user.is_authenticated:
+        return redirect("/")
 
-    return redirect("/")
+    logout_user()
+    if "_username" in session:
+        session.pop("_username")
+
+    resp = make_response(redirect("/"))
+    resp.set_cookie("auth_id", "", max_age=0, path="/")
+    resp.set_cookie("front_template_filename", "", max_age=0, path="/")
+    resp.set_cookie("back_template_filename", "", max_age=0, path="/")
+    resp.set_cookie("template_orientation", "", max_age=0, path="/")
+    return resp

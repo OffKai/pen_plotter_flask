@@ -8,12 +8,9 @@ args = parser.parse_args()
 
 load_config(str(args.config[0]))
 
-if args.dev:
-    import test
-else:
-    app.register_blueprint(invites.bp)
-    app.register_blueprint(admin_blueprint.bp)
-    app.register_blueprint(guest_blueprint.bp)
-    app.register_blueprint(landing_blueprint.bp)
-    from pp_room_service import sockets
-    socket.run(app, host="0.0.0.0", port=port)
+app.register_blueprint(invites.bp)
+app.register_blueprint(admin_blueprint.bp)
+app.register_blueprint(guest_blueprint.bp)
+app.register_blueprint(landing_blueprint.bp)
+from pp_room_service import sockets
+socket.run(app, host="0.0.0.0", port=port)

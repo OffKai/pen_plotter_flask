@@ -1,19 +1,20 @@
+import yaml
+
 from flask import Blueprint, render_template
-from flask_httpauth import HTTPBasicAuth
+from flask_httpauth import HTTPDigestAuth
+
+from pp_config.secrets import get_secret
 
 bp = Blueprint('admin', __name__, url_prefix='/oke_pp_admin')
 
-basic_auth = HTTPBasicAuth()
-basic_auth_users = { "oke_admin": "admin" }
+auth = HTTPDigestAuth()
+auth_users = yaml.safe_load(str(get_secret("admin_auth")))
 
-@basic_auth.verify_password
-def verify_admin(username, password):
-    if username in basic_auth_users and password == basic_auth_users[username]:
-        return username
-    else:
-        return None
+@auth.get_password
+def get_admin(username):
+    return auth_users.get(username, None)
 
 @bp.route("/", methods=["GET"])
-@basic_auth.login_required
+@auth.login_required
 def admin_page():
     return render_template("test_admin.html")
