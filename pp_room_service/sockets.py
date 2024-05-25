@@ -1,13 +1,16 @@
 from flask import request, render_template
 from flask_socketio import join_room
-from flask_httpauth import HTTPBasicAuth
+from flask_httpauth import HTTPDigestAuth
+import yaml
 
 from app import app, socket
+from pp_room_service.guest_list import is_authentic_guest, get_authed_guest
+from pp_config.secrets import get_secret
 
 USER_ID = "offkai_pp_uid"
 
-basic_auth = HTTPBasicAuth()
-basic_auth_users = { "oke_admin": "admin" }
+auth = HTTPDigestAuth()
+auth_users = yaml.safe_load(str(get_secret("admin_auth")))
 
 user_manifest = {}
 room_manifest = { "waiting": [], "room1": "", "room2": "", "room3": "" }
@@ -16,32 +19,26 @@ def is_admin_token(token):
     return token == "admin"
 
 def is_user_token(token):
-    return token in user_manifest
+    return is_authentic_guest(token)
 
-@basic_auth.verify_password
-def verify_admin(username, password):
-    if username in basic_auth_users and password == basic_auth_users[username]:
-        return username
-    else:
-        return None
+@auth.get_password
+def verify_admin(username):
+    return auth_users.get(username, None)
 
 @socket.on("connect")
 def user_connect(auth):
-    print("User connected")
-    print(auth)
     if auth is None or "token" not in auth:
-        print ("Reject, no token")
         return False
     elif is_user_token(auth["token"]):
-        print ("Accept user")
         handle_user_connect(auth["token"])
     else:
-        print ("Reject, bad token")
         return False
 
 def handle_user_connect(token):
-    #  TODO handle user connect server-side logic
-    user = user_manifest[token]
+    guest = get_authed_guest(token)
+    if guest is None:
+        join_room("unauthed... this should never happen")
+    user = guest.name
     join_room(user)
     room_manifest["waiting"].append(user)
     socket.emit("assignName", { "name": user }, to=user)

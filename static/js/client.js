@@ -2,7 +2,7 @@ var user = "user" + Math.floor(Math.random() * 10);
 var currentRoom = "room1";
 var socket = io({
     auth: {
-        token: sessionStorage.getItem("authId") || user
+        token: sessionStorage.getItem("auth_id") || user
     }
 });
 

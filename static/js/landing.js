@@ -19,7 +19,7 @@ notifyConnectionFailed = () => {
 //
 var socket = io({
     auth: {
-        token: getCookie("authId") || "unauthenticated"
+        token: getCookie("auth_id") || "unauthenticated"
     }
 });
 

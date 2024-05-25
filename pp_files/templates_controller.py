@@ -14,9 +14,6 @@ from flask_login import (
 )
 from math import floor
 import os
-import random
-import string
-import uuid
 import yaml
 
 from pp_config.secrets import get_secret
@@ -75,21 +72,19 @@ def render_admin_page(day_in):
     day_code = floor(day_in) if day_in >= 0 and day_in < 3 else 4
     return render_template("admin_2.5.html", guest_data = get_guests_for_day(day_code))
 
-@bp.route("/generate-invite/", defaults={"guest_id_in": None}, methods=["GET"])
-@bp.route("/generate-invite/<int:guest_id_in>", methods=["GET"])
+@bp.route("/generate-invite/", defaults={"guest_name_in": None}, methods=["GET"])
+@bp.route("/generate-invite/<guest_name_in>", methods=["GET"])
 @auth.login_required
 def generate_invite(guest_name_in):
-    current_day_tab = 4
     if guest_name_in == None:
         return None
     else:
         generate_slug_for_guest(guest_name_in)
-    return render_template("admin_2.5.html", guest_data = get_guests_for_day(current_day_tab))
+    return redirect("/admin/2.5")
 
 @bp.route("/test/gallery", methods=["GET"])
 @auth.login_required
 def render_gallery_page():
-    print_guest_list()
     return render_template("gallery.html", guest_data = get_guests_for_day(4))
 
 @bp.route("/login/<invite_code>", methods=["GET"])
