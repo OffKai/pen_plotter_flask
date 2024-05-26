@@ -12,5 +12,5 @@ app.register_blueprint(invites.bp)
 app.register_blueprint(admin_blueprint.bp)
 app.register_blueprint(guest_blueprint.bp)
 app.register_blueprint(landing_blueprint.bp)
-from pp_room_service import sockets
+from pp_room_service import room_controller
 socket.run(app, host="0.0.0.0", port=port)

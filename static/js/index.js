@@ -1,5 +1,44 @@
 import { registerModalListeners } from "../js/modal.js"
 
+//
+// SOCKETS
+//
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+
+var socket = io({
+    auth: {
+        token: getCookie("auth_id") || "unauthenticated"
+    }
+});
+
+socket.on('connect', () => {
+    console.log("connected");
+});
+
+socket.on('connect_error', (data) => {
+    console.log(data)
+});
+
+socket.on('kick', () => {
+    window.location = "/logout";
+});
+
+socket.on('move', (data) => {
+    if (!data) window.location = "/";
+});
+
+socket.on('ping', () => {
+    alert("Ping! :^)");
+});
+
+//
+// THE REST
+//
 function ease(x) {
     return 1 - Math.sqrt(1 - x * x)
 }
@@ -833,10 +872,7 @@ class App {
         // ctx.lineCap = 'round';
         // ctx.lineJoin = 'round';
 
-        this.socket = io.connect();
-        this.socket.on("connect", () => {
-            this.socket.emit("join", { "room": "guests" })
-        });
+        this.socket = io.connect({ auth: { token: getCookie("auth_id") || "unauthenticated" } });
 
         let pane = document.getElementById("pane")
         let canvas = document.getElementById("canvas")
@@ -1214,7 +1250,7 @@ class App {
 
         let serializer = new XMLSerializer()
         let content = serializer.serializeToString(svg)
-        this.socket.emit("plot", { "svg": content })
+        socket.emit("print", { guest: getCookie("auth_id"), svg: content })
     }
 
     downloadEventHandler = () => {

@@ -1,11 +1,12 @@
 import yaml
 
-from flask import Blueprint, render_template
+from flask import Blueprint, make_response, render_template
 from flask_httpauth import HTTPDigestAuth
 
 from pp_config.secrets import get_secret
+from pp_room_service.guest_list import get_room_manifest
 
-bp = Blueprint('admin', __name__, url_prefix='/oke_pp_admin')
+bp = Blueprint('admin', __name__, url_prefix='/oke-pp-admin')
 
 auth = HTTPDigestAuth()
 auth_users = yaml.safe_load(str(get_secret("admin_auth")))
@@ -17,4 +18,12 @@ def get_admin(username):
 @bp.route("/", methods=["GET"])
 @auth.login_required
 def admin_page():
-    return render_template("test_admin.html")
+    auth_id = str(get_secret("admin_token"))
+    resp = make_response(render_template("test_admin.html"))
+    resp.set_cookie("auth_id", auth_id, max_age=604800, path="/")
+    return resp
+
+@bp.route("/user-manifest", methods=["GET"])
+@auth.login_required
+def user_manifest():
+    return get_room_manifest()

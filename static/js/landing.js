@@ -32,7 +32,14 @@ socket.on('connect_error', (data) => {
     notifyConnectionFailed();
 });
 
-socket.on('moveUser', (data) => {
-    console.log(data);
+socket.on('move', (data) => {
     if (data) window.location = "/pp";
+});
+
+socket.on('kick', () => {
+    window.location = "/logout";
+});
+
+socket.on('ping', () => {
+    alert("Ping! :^)");
 });
