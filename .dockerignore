@@ -2,6 +2,9 @@
 .github/
 .gitignore
 
+# README
+README.md
+
 # python venv
 .python-version
 ppenv/

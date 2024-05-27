@@ -1,4 +1,3 @@
-from flask import request, render_template
 from flask_socketio import join_room
 from flask_httpauth import HTTPDigestAuth
 import yaml
