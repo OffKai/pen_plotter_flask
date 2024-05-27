@@ -1,0 +1,30 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+<script type="text/javascript" src="../static/js/admin.js"></script>
+
+<p>Hello Admin!</p>
+
+<p>Waiting Room: <div id="waiting"></div></p>
+<p>Room 1: <div id="room1"></div></p>
+<p>Room 2: <div id="room2"></div></p>
+<p>Room 3: <div id="room3"></div></p>
+
+<p>User: <input id="user" type="text" /></p>
+<p>
+    <button onclick="kickUser()">Kick user</button>
+</p>
+<p></p>
+<p>
+    <button onclick="moveUser(0)">Move to waiting room!</button>
+    <button onclick="moveUser(1)">Move to room 1!</button>
+    <button onclick="moveUser(2)">Move to room 2!</button>
+    <button onclick="moveUser(3)">Move to room 3!</button>
+</p>
+<p>
+    <button onclick="pingRoom(0)">Ping to waiting room!</button>
+    <button onclick="pingRoom(1)">Ping to room 1!</button>
+    <button onclick="pingRoom(2)">Ping to room 2!</button>
+    <button onclick="pingRoom(3)">Ping to room 3!</button>
+</p>
+
+<div id="chat">
+</div>

@@ -130,3 +130,12 @@ dmypy.json
 
 # VsCode
 .vscode/
+
+# python venv
+ppenv/
+
+# local svg testing
+mount/
+
+# LibreOffice
+.~lock.*

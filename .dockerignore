@@ -1,2 +1,16 @@
+# git
 .github/
 .gitignore
+
+# README
+README.md
+
+# python venv
+.python-version
+ppenv/
+
+# local svg store
+mount/
+
+# dev secrets
+dev-secrets/

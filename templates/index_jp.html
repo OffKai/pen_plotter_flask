@@ -140,7 +140,7 @@
                                     <span style="color: #FFFFFF;">ログイン</span>
                                 </button>
                                 {% else %}
-                                <a href="{{ url_for('user.logout') }}">
+                                <a href="{{ url_for('templates_controller.logout') }}">
                                     <button class="button dropdown-item" style="background-color: #6e6e6e">
                                         <span class="icon">
                                             <i class="fa-solid fa-arrow-right-from-bracket fa-fw"
@@ -208,7 +208,7 @@
         </div>
 
         <div id="watermark">
-            <img src="/static/images/oke_gen2_logo_horizontal.png" />
+            <img src="/static/images/OffKaiEXPO_logo_no_gen.png" />
         </div>
 
         <div id="login-modal" class="modal">

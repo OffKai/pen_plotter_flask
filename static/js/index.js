@@ -1,5 +1,44 @@
 import { registerModalListeners } from "../js/modal.js"
 
+//
+// SOCKETS
+//
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+
+var socket = io({
+    auth: {
+        token: getCookie("auth_id") || "unauthenticated"
+    }
+});
+
+socket.on('connect', () => {
+    console.log("connected");
+});
+
+socket.on('connect_error', (data) => {
+    console.log(data)
+});
+
+socket.on('kick', () => {
+    window.location = "/logout";
+});
+
+socket.on('move', (data) => {
+    if (!data) window.location = "/";
+});
+
+socket.on('ping', () => {
+    alert("Ping! :^)");
+});
+
+//
+// THE REST
+//
 function ease(x) {
     return 1 - Math.sqrt(1 - x * x)
 }
@@ -833,10 +872,7 @@ class App {
         // ctx.lineCap = 'round';
         // ctx.lineJoin = 'round';
 
-        this.socket = io.connect();
-        this.socket.on("connect", () => {
-            this.socket.emit("join", { "room": "guests" })
-        });
+        this.socket = io.connect({ auth: { token: getCookie("auth_id") || "unauthenticated" } });
 
         let pane = document.getElementById("pane")
         let canvas = document.getElementById("canvas")
@@ -846,8 +882,24 @@ class App {
         this.canvas = canvas
         this.context = context
         this.transform = new DOMMatrix()
+
         this.background = new Image()
-        this.orient = Orient.Portrait;
+        this.orient = Orient.Portrait
+
+        const cookiesArray = decodeURIComponent(document.cookie).split("; ")
+        cookiesArray.forEach((cookie) => {
+            let cookiePieces = cookie.split("=")
+            if (cookiePieces[0] === "front_template_filename") {
+                this.frontTemplateFilename = cookiePieces[1].slice(1, -1)
+                this.background.src = "/static/images/guest_templates/" + this.frontTemplateFilename
+            }
+            else if (cookiePieces[0] === "back_template_filename") {
+                this.backTemplateFilename = cookiePieces[1].slice(1, -1)
+            }
+            else if (cookiePieces[0] === "template_orientation" && cookiePieces[1] === "h") {
+                this.orient = Orient.Landscape
+            }
+        })
 
         this.setCanvasPenColor("#000000")
         this.resizeCanvas()
@@ -1198,7 +1250,7 @@ class App {
 
         let serializer = new XMLSerializer()
         let content = serializer.serializeToString(svg)
-        this.socket.emit("plot", { "svg": content })
+        socket.emit("print", { guest: getCookie("auth_id"), svg: content })
     }
 
     downloadEventHandler = () => {
@@ -1387,6 +1439,20 @@ class App {
         return point.transform(transform)
     }
 }
+
+// admin pages
+let copyButtons = document.querySelectorAll('.copy-invite-button')
+copyButtons.forEach(function(b) {
+    b.addEventListener('click', function(event) {
+        navigator.clipboard.writeText(window.location.host + "/login/" + b.dataset.slug)
+        .then(() => {
+            alert('Copied to clipboard!\n\nDO NOT open this link yourself as staff. Send it to guest:\n\n' + b.dataset.guestname);
+        })
+        .catch((err) => {
+            console.error('Error copying to clipboard:', err);
+        })
+    })
+})
 
 function perpendicularDistance(p, a, b) {
     let ab = b.sub(a)
