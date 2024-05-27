@@ -11,7 +11,7 @@ auth_users = yaml.safe_load(str(get_secret("admin_auth")))
 bp = Blueprint('printer', __name__, url_prefix='/printer')
 
 @bp.route("/svgs", defaults={"guest_name": None}, methods=["GET"])
-@bp.route("/svgs/<str:guest_name>", methods=["GET"])
+@bp.route("/svgs/<guest_name>", methods=["GET"])
 def get_svg(guest_name: str):
     if guest_name is None:
         zip_stream = load_all_svgs_as_zip_stream_fs()
