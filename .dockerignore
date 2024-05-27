@@ -3,7 +3,11 @@
 .gitignore
 
 # python venv
+.python-version
 ppenv/
 
 # local svg store
 mount/
+
+# dev secrets
+dev-secrets/

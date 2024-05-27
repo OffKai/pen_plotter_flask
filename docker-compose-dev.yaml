@@ -1,0 +1,19 @@
+services:
+  pp:
+    build: .
+    image: offkaiexpo.com/penplotter
+    container_name: pp_app
+    ports:
+        - "80:5000"
+    secrets:
+      - admin_auth
+      - admin_token
+    command: ["--config", "config-dev.yaml"]
+    volumes:
+      - /mount/svg
+
+secrets:
+  admin_auth:
+    file: ./dev-secrets/admin_auth.txt
+  admin_token:
+    file: ./dev-secrets/admin_token.txt
