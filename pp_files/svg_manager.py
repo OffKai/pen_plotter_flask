@@ -26,7 +26,11 @@ def svg_meta_to_file_name(guest_name, version=None):
 
 def save_svg_fs(guest_name, svg_content):
     increment_guest_version(guest_name)
-    svg = open(svg_meta_to_file_name(guest_name), "w")
+    filename = svg_meta_to_file_name(guest_name)
+    dirname = os.path.dirname(filename)
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
+    svg = open(filename, "w")
     svg.write(str(svg_content))
     svg.close()
 
