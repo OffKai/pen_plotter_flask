@@ -65,22 +65,35 @@ auth_users = yaml.safe_load(str(get_secret("admin_auth")))
 def verify_admin(username):
     return auth_users.get(username, None)
 
-@bp.route("/admin/2.5/", defaults={"day_in": 4}, methods=["GET"])
-@bp.route("/admin/2.5/<int:day_in>", methods=["GET"])
+@bp.route("/admin/invite/", defaults={"day_in": 4}, methods=["GET"])
+@bp.route("/admin/invite/<int:day_in>", methods=["GET"])
 @auth.login_required
 def render_admin_page(day_in):
     day_code = floor(day_in) if day_in >= 0 and day_in < 3 else 4
-    return render_template("admin_2.5.html", guest_data = get_guests_for_day(day_code))
+    return render_template("admin_invite.html", guest_data = get_guests_for_day(day_code))
 
 @bp.route("/generate-invite/", defaults={"guest_name_in": None}, methods=["GET"])
 @bp.route("/generate-invite/<guest_name_in>", methods=["GET"])
 @auth.login_required
 def generate_invite(guest_name_in):
-    if guest_name_in == None:
+    if guest_name_in is None:
         return None
     else:
         generate_slug_for_guest(guest_name_in)
-    return redirect("/admin/2.5")
+    return redirect("/admin/invite")
+
+@bp.route("/invite/", defaults={"guest_name_in": None}, methods=["GET"])
+@bp.route("/invite/<guest_name_in>", methods=["GET"])
+@auth.login_required
+def generate_invite2(guest_name_in):
+    if guest_name_in is None:
+        return "invalid"
+    else:
+        slug = generate_slug_for_guest(guest_name_in)
+        if slug is None:
+            return "invalid"
+        else:
+            return slug
 
 @bp.route("/test/gallery", methods=["GET"])
 @auth.login_required
@@ -89,7 +102,7 @@ def render_gallery_page():
 
 @bp.route("/login/<invite_code>", methods=["GET"])
 def login_with_invite_link(invite_code):
-    if current_user.is_authenticated or invite_code == None or invite_code == "":
+    if current_user.is_authenticated or invite_code is None or invite_code == "":
         return redirect("/")
 
     guest_name, auth_id = authenticate_slug(invite_code)
