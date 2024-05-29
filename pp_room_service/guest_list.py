@@ -39,12 +39,12 @@ def generate_slug_for_guest(guest_name: str):
     return slug
 
 def get_new_slug():
-    slug = generate_random_slug(4)
+    slug = generate_random_slug()
     while slug in invites:
-        slug = generate_random_slug(4)
+        slug = generate_random_slug()
     return slug
 
-def generate_random_slug(length=4):
+def generate_random_slug(length=6):
     return ''.join(random.choice(string.ascii_lowercase) for i in range(length))
 
 def authenticate_slug(slug: str):
