@@ -69,8 +69,15 @@
                 <div class="grid">
                     <div class="cell">
                         <div class="block">
-                            <input class="input" id="user" type="text" autocomplete="off"
-                                placeholder="Copy and paste username here" />
+                            <datalist id="user-list">
+                                {% for guest in guests %}
+                                <option value="{{guest.name}}"></option>
+                                {% endfor %}
+                            </datalist>
+                            <form>
+                                <input class="input is-fullwidth" list="user-list" id="user" name="user"
+                                    autocomplete="off" placeholder="Type or click on a username" />
+                            </form>
                         </div>
                     </div>
                     <div class="cell">
@@ -92,6 +99,9 @@
                                 <button class="button is-fullwidth" id="move3">Move to room
                                     3</button>
                             </div> -->
+                            <div class="column">
+                                <button class="button is-fullwidth" id="invite">Generate new invite link</button>
+                            </div>
                             <div class="column">
                                 <button class="button is-fullwidth" id="kick">Disconnect</button>
                             </div>

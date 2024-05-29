@@ -62,8 +62,7 @@ function renderRooms() {
             ul.appendChild(li);
         }
     }
-};
-
+}
 
 //
 // USERS MANIFEST API
@@ -115,8 +114,51 @@ addEventListener("DOMContentLoaded", () => {
                     })
                     .catch((err) => {
                         console.error('Error copying to clipboard:', err);
-                    })
+                    });
             });
+        });
+    }
+
+    let user = document.getElementById("user");
+    if (user) {
+        // add listener when the text in the input field changes
+        user.addEventListener("change", function () {
+            let match = false;
+
+            // check if input matches entry in datalist
+            for (let j = 0; j < this.list.options.length; j++) {
+                if (this.value == this.list.options[j].value) {
+                    match = true;
+                    break;
+                }
+            }
+
+            if (match) {
+                // empty error message means success
+                this.setCustomValidity("");
+            } else {
+                // non-empty error message means failure
+                this.setCustomValidity("Please select a guest from the list.");
+            }
+        });
+    }
+
+    let invite = document.getElementById("invite");
+    if (invite) {
+        invite.addEventListener("click", () => {
+            let input = document.getElementById("user");
+            if (input && input.form.reportValidity() && input.value != "") {
+                fetch(`/invite/${input.value}`)
+                    .then(resp => resp.text())
+                    .then(slug => {
+                        navigator.clipboard.writeText(`${window.location.host}/login/${slug}`)
+                            .then(() => {
+                                alert(`Link copied to clipboard!\n\nDo not open this link yourself. Send it to ${input.value}.`)
+                            })
+                            .catch(console.error);
+                    })
+                    .catch(console.error);
+            }
         });
     }
 
