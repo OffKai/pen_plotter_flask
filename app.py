@@ -27,6 +27,12 @@ def get_locale():
 
     return session["locale"]
 
+def get_username():
+    if "_username" not in session:
+        return ""
+
+    return session["_username"]
+
 
 # Windows registry can get this messed up, so overriding here
 mimetypes.add_type("application/javascript", ".js")
@@ -40,6 +46,7 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1)
 app.config["SECRET_KEY"] = secrets.token_urlsafe(16)
 
 app.jinja_env.globals["get_locale"] = get_locale
+app.jinja_env.globals["get_username"] = get_username
 
 #oauth.init_app(app)
 

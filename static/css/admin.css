@@ -1,0 +1,12 @@
+#user {
+    background: transparent;
+}
+
+ul.no-bullets {
+    /* Remove bullets */
+    list-style-type: none;
+    /* Remove padding */
+    padding: 0;
+    /* Remove margins */
+    margin: 0;
+}

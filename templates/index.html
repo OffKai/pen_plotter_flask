@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-{% if get_locale() == "en" %}
+<script src="{{ url_for('static', filename='js/index.js') }}" type="module"></script>
+<!-- {% if get_locale() == "en" %} -->
 {% include "index_en.html" %}
-{% elif get_locale() == "ja" %}
-{% include "index_jp.html" %}
+<!-- {% elif get_locale() == "ja" %}
+{% include "index_jp.html" %} -->
 {% endif %}
 
 {% endblock %}

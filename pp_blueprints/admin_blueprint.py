@@ -6,7 +6,7 @@ from flask_httpauth import HTTPDigestAuth
 from pp_config.secrets import get_secret
 from pp_room_service.guest_list import get_room_manifest
 
-bp = Blueprint('admin', __name__, url_prefix='/oke-pp-admin')
+bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 auth = HTTPDigestAuth()
 auth_users = yaml.safe_load(str(get_secret("admin_auth")))
@@ -19,7 +19,7 @@ def get_admin(username):
 @auth.login_required
 def admin_page():
     auth_id = str(get_secret("admin_token"))
-    resp = make_response(render_template("test_admin.html"))
+    resp = make_response(render_template("admin.html"))
     resp.set_cookie("auth_id", auth_id, max_age=604800, path="/")
     return resp
 

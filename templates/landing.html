@@ -1,10 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-<script type="text/javascript" src="../static/js/landing.js"></script>
+<div id="landing-grid">
+    <div id="landing-logo">
+        <img src="/static/images/OffKaiEXPO Gen3_1.png" />
+    </div>
 
-Hey Poly pls make this look pretty thanks!
+    <div class="has-text-centered is-responsive" id="landing-info">
+        <span class="is-size-3-desktop is-size-4-tablet is-size-5-mobile">
+            {% if get_username() == "" %}
+            <p>
+                <b>OffKai Expo M&G Pen Plotter</b>
+            </p>
+            {% else %}
+            <p>
+                <b>Welcome, {{ get_username() }}!</b>
+            </p>
+            <p>
+                <b>Please wait for a M&G staff member to connect you to the pen plotter.</b>
+            </p>
+            <p>
+                (This page will automatically change when they do.)
+            </p>
+            {% endif %}
+        </span>
+    </div>
 
-<div id="chat">
 </div>
+
+<div id="chat"></div>
 {% endblock %}

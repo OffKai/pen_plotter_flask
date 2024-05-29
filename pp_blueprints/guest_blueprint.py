@@ -7,13 +7,13 @@ def index():
     return render_template("index.html")
 
 
-@bp.route("/en", methods=["GET", "POST"])
-def lang_en():
-    session["locale"] = "en"
-    return redirect("/")
+# @bp.route("/en", methods=["GET", "POST"])
+# def lang_en():
+#     session["locale"] = "en"
+#     return redirect("/")
 
 
-@bp.route("/jp", methods=["GET", "POST"])
-def lang_jp():
-    session["locale"] = "ja"
-    return redirect("/")
+# @bp.route("/jp", methods=["GET", "POST"])
+# def lang_jp():
+#     session["locale"] = "ja"
+#     return redirect("/")

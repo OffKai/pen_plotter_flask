@@ -1,44 +1,6 @@
 import { registerModalListeners } from "../js/modal.js"
+import { socketEmit } from "../js/socket.js"
 
-//
-// SOCKETS
-//
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-}
-
-
-var socket = io({
-    auth: {
-        token: getCookie("auth_id") || "unauthenticated"
-    }
-});
-
-socket.on('connect', () => {
-    console.log("connected");
-});
-
-socket.on('connect_error', (data) => {
-    console.log(data)
-});
-
-socket.on('kick', () => {
-    window.location = "/logout";
-});
-
-socket.on('move', (data) => {
-    if (!data) window.location = "/";
-});
-
-socket.on('ping', () => {
-    alert("Ping! :^)");
-});
-
-//
-// THE REST
-//
 function ease(x) {
     return 1 - Math.sqrt(1 - x * x)
 }
@@ -872,8 +834,6 @@ class App {
         // ctx.lineCap = 'round';
         // ctx.lineJoin = 'round';
 
-        this.socket = io.connect({ auth: { token: getCookie("auth_id") || "unauthenticated" } });
-
         let pane = document.getElementById("pane")
         let canvas = document.getElementById("canvas")
         let context = canvas.getContext("2d")
@@ -1250,7 +1210,7 @@ class App {
 
         let serializer = new XMLSerializer()
         let content = serializer.serializeToString(svg)
-        socket.emit("print", { guest: getCookie("auth_id"), svg: content })
+        socketEmit("print", { guest: getCookie("auth_id"), svg: content })
     }
 
     downloadEventHandler = () => {
@@ -1440,20 +1400,6 @@ class App {
     }
 }
 
-// admin pages
-let copyButtons = document.querySelectorAll('.copy-invite-button')
-copyButtons.forEach(function(b) {
-    b.addEventListener('click', function(event) {
-        navigator.clipboard.writeText(window.location.host + "/login/" + b.dataset.slug)
-        .then(() => {
-            alert('Copied to clipboard!\n\nDO NOT open this link yourself as staff. Send it to guest:\n\n' + b.dataset.guestname);
-        })
-        .catch((err) => {
-            console.error('Error copying to clipboard:', err);
-        })
-    })
-})
-
 function perpendicularDistance(p, a, b) {
     let ab = b.sub(a)
     return Math.abs(p.perpDot(ab) + b.perpDot(a)) / ab.length()
@@ -1559,4 +1505,4 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
     ctx.drawImage(img, cx, cy, cw, ch, x, y, w, h);
 }
 
-new App()
+addEventListener("load", () => { new App() });

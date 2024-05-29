@@ -1,21 +1,24 @@
-{% extends "base.html" %}
+{% extends "admin_base.html" %}
 
 {% block content %}
-
 <div class="absolute w-screen h-screen flex flex-col justify-center items-center bg-[#484848]">
 
     <div class="inline-flex rounded-md shadow-sm py-8">
-        <a href="/admin/2.5/0" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700">
-          Friday
+        <a href="/admin/2.5/0"
+            class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700">
+            Friday
         </a>
-        <a href="/admin/2.5/1" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700">
-          Saturday
+        <a href="/admin/2.5/1"
+            class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700">
+            Saturday
         </a>
-        <a href="/admin/2.5/2" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700">
-          Sunday
+        <a href="/admin/2.5/2"
+            class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700">
+            Sunday
         </a>
-        <a href="/admin/2.5/3" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700">
-          All
+        <a href="/admin/2.5/3"
+            class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700">
+            All
         </a>
     </div>
 
@@ -38,39 +41,40 @@
                 </tr>
             </thead>
             <tbody>
-            {% for g in guest_data %}
+                {% for g in guest_data %}
                 <tr class="bg-white border-b">
                     <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap">
                         <div class="ps-3">
                             <div class="text-base font-semibold">{{g.name}}</div>
-                        </div>  
+                        </div>
                     </th>
                     <td class="px-6 py-4">
                         {% if g.is_group %}
-                            yes
+                        yes
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
                         {% if g.invite_slug == None %}
-                            {% if g.auth_id != None %}
-                                <p class="text-red font-semibold">has been used</p>
-                            {% endif %}
-                            <a href="/generate-invite/{{g.name}}" class="font-medium text-blue-600 hover:underline">
-                                <p>generate new</p>
-                            </a>
+                        {% if g.auth_id != None %}
+                        <p class="text-red font-semibold">has been used</p>
+                        {% endif %}
+                        <a href="/generate-invite/{{g.name}}" class="font-medium text-blue-600 hover:underline">
+                            <p>generate new</p>
+                        </a>
                         {% else %}
-                            /login/{{g.invite_slug}}
+                        /login/{{g.invite_slug}}
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
                         {% if g.invite_slug != None %}
-                            <button type="button" data-slug="{{g.invite_slug}}" data-guestname="{{g.name}}" class="copy-invite-button focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-xs px-3 py-2 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
-                                copy
-                            </button>
+                        <button type="button" data-slug="{{g.invite_slug}}" data-guestname="{{g.name}}"
+                            class="copy-invite-button focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-xs px-3 py-2 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+                            copy
+                        </button>
                         {% endif %}
                     </td>
                 </tr>
-            {% endfor %}
+                {% endfor %}
             </tbody>
         </table>
     </div>

@@ -13,6 +13,8 @@ guest_rooms = dict()
 # INVITE/AUTH LOGIC
 #
 def add_guest_to_guest_list(guest: Guest):
+    global all_guests
+
     all_guests[guest.name] = guest
 
 def get_guest(guest_name: str):
@@ -26,6 +28,9 @@ def get_guests_for_day(day: int):
     return sorted(guests, key=lambda guest: guest.name.lower())
 
 def generate_slug_for_guest(guest_name: str):
+    global all_guests
+    global invites
+
     if guest_name not in all_guests:
         return None
     slug = get_new_slug()
@@ -43,8 +48,12 @@ def generate_random_slug(length=4):
     return ''.join(random.choice(string.ascii_lowercase) for i in range(length))
 
 def authenticate_slug(slug: str):
+    global all_guests
+    global authed_guests
+    global invites
+
     if slug not in invites:
-        return None
+        return None, None
     guest_name = invites[slug]
     auth_id = str(uuid.uuid4())
     all_guests[guest_name].invite_slug = None
@@ -66,23 +75,38 @@ def is_guest_in_room(guest_name):
     return guest_name in guest_rooms
 
 def add_guest_to_waiting_room(auth_id: str):
+    global guest_rooms
+
     if is_authentic_guest(auth_id):
         guest = authed_guests[auth_id]
-        guest_rooms[guest.name] = 0
-        return 0
+        if not is_guest_in_room(guest.name):
+            # print("guest assigned to waiting room")
+            guest_rooms[guest.name] = 0
+
+    return
 
 def move_guest_to_room(guest_name, room_index):
+    global guest_rooms
+    print("before move:", guest_rooms)
     if is_guest_in_room(guest_name):
         guest_rooms[guest_name] = room_index
+        print("after move:", guest_rooms)
         return room_index
     
 def kick_guest(guest_name_or_auth_id):
+    global authed_guests
+    global guest_rooms
+
     if guest_name_or_auth_id in all_guests:
         #it's guest_name
         guest = all_guests[guest_name_or_auth_id]
     elif guest_name_or_auth_id in authed_guests:
         #it's auth_id
         guest = authed_guests[guest_name_or_auth_id]
+
+    if guest is None:
+        return
+
     guest_auth_id = guest.auth_id
     
     if guest_auth_id is None:
@@ -93,7 +117,12 @@ def kick_guest(guest_name_or_auth_id):
     del guest_rooms[guest.name]
 
 def get_room_manifest():
-    return { "waiting": get_guests_in_room(0), "room1": get_guests_in_room(1), "room2": get_guests_in_room(2), "room3": get_guests_in_room(3) }
+    return {
+        "waiting": get_guests_in_room(0),
+        "room1": get_guests_in_room(1),
+        "room2": get_guests_in_room(2),
+        "room3": get_guests_in_room(3),
+    }
 
 def get_guests_in_room(room_index):
     guests = list()
