@@ -43,6 +43,11 @@ def user_connect(auth):
     else:
         print("connection fail: auth failed")
         return False
+    
+@socket.on("connect", namespace="/plotter")
+def plotter_connect():
+    print("plotter connected")
+    join_room("plotter")
 
 def handle_user_connect(token):
     guest = get_authed_guest(token)
@@ -59,6 +64,8 @@ def handle_user_connect(token):
 @socket.on("print")
 def print_svg(data):
     save_svg_fs(get_authed_guest(data["guest"]), data["svg"])
+    socket.emit("plot", {"svg": data["svg"]}, namespace="/plotter", to="plotter")
+
 
 #
 # ADMIN SOCKETS
