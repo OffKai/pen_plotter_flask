@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session, redirect
 
-bp = Blueprint('guest', __name__, url_prefix='/pp')
+bp = Blueprint('guest', __name__, url_prefix='/canvas')
 
 @bp.route("/")
 def index():

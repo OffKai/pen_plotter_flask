@@ -30,7 +30,7 @@ socket.on('connect_error', (data) => {
 
 socket.on('move', (data) => {
     if (data) {
-        window.location = "/pp"
+        window.location = "/canvas"
     } else {
         window.location = "/"
     }
