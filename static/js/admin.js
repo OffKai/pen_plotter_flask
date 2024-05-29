@@ -104,7 +104,7 @@ function pingRoom(roomIndex) {
     }
 };
 
-addEventListener("load", () => {
+addEventListener("DOMContentLoaded", () => {
     let copyButtons = document.querySelectorAll('.copy-invite-button')
     if (copyButtons) {
         copyButtons.forEach(function (button) {

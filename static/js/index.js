@@ -1505,4 +1505,4 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
     ctx.drawImage(img, cx, cy, cw, ch, x, y, w, h);
 }
 
-addEventListener("load", () => { new App() });
+new App()
