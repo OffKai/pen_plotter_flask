@@ -1,3 +1,4 @@
+import logging
 import uuid
 from flask import (
     Blueprint,
@@ -27,7 +28,7 @@ def generate_invite():
 @bp.route("/login/invite/<invite_code>", methods=["GET"])
 def login_single_use_invite(invite_code):
     if current_user.is_authenticated:
-        print("in endpoint /<invite_code>: current user is already authenticated")
+        logging.info("in endpoint /<invite_code>: current user is already authenticated")
         return redirect("/")
     if invite_code in invite_codes:
         invite_codes.remove(invite_code)

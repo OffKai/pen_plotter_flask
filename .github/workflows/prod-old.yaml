@@ -1,4 +1,4 @@
-name: Push to prod instances plotter*
+name: Push to prod instances gen2 plotter*
 on: [workflow_dispatch]
 
 permissions:

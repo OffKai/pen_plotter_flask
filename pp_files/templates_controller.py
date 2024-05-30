@@ -24,8 +24,7 @@ from pp_room_service.guest_list import (
     get_guest, 
     get_guests_for_day, 
     generate_slug_for_guest, 
-    authenticate_slug,
-    print_guest_list
+    authenticate_slug
 )
 
 bp = Blueprint("templates_controller", __name__)
