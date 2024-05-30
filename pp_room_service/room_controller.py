@@ -1,3 +1,4 @@
+from flask import request, render_template, session
 from flask_socketio import join_room
 from flask_httpauth import HTTPDigestAuth
 import logging
@@ -33,21 +34,28 @@ def verify_admin(username):
 #
 @socket.on("connect")
 def user_connect(auth):
-    logging.info("A user connected")
+    logging.info("new user connection attempt")
     if auth is None or "token" not in auth:
-        logging.info("Illegal user auth", auth)
+        logging.info("connection fail: auth invalid", auth)
         return False
     elif is_user_token(auth["token"]):
+        logging.info("connection success")
         handle_user_connect(auth["token"])
     else:
-        logging.info("User failed to auth")
+        logging.info("connection fail: auth failed")
         return False
+    
+@socket.on("connect", namespace="/plotter")
+def plotter_connect():
+    print("plotter connected")
+    join_room("plotter")
 
 def handle_user_connect(token):
     guest = get_authed_guest(token)
-    logging.info("User connected: ", guest.name)
+    logging.info(guest.name, "connected")
     if guest is None:
-        join_room("unauthed... this should never happen")
+        logging.info("unauthed... this should never happen")
+        return
     user = guest.name
     join_room(user)
     add_guest_to_waiting_room(token)
@@ -57,40 +65,42 @@ def handle_user_connect(token):
 @socket.on("print")
 def print_svg(data):
     save_svg_fs(get_authed_guest(data["guest"]), data["svg"])
+    socket.emit("plot", {"svg": data["svg"]}, namespace="/plotter", to="plotter")
+
 
 #
 # ADMIN SOCKETS
 #
 @socket.on("connect", namespace="/admin")
 def admin_connect(auth):
-    logging.info("An admin connected")
+    logging.info("new admin connection attempt")
     if auth is None or "token" not in auth:
-        logging.info("Illegal admin auth")
+        logging.info("connection fail: auth invalid")
         return False
     elif is_admin_token(auth["token"]):
-        logging.info("Admin connected")
+        logging.info("connection success")
         join_room("admin")
     else:
-        logging.info("Admin failed to auth")
+        logging.info("connection fail: auth failed")
         return False
 
 @socket.on("move", namespace="/admin")
 def move_user(data):
-    logging.info("Admin requested to move user:", data)
+    logging.info("admin requested move:", data)
     move_guest_to_room(data["user"], data["to"])
     socket.emit("move", (data["to"] != 0), to=data["user"])
     socket.emit("updateManifest", get_room_manifest(), to="admin")
 
 @socket.on("kick", namespace="/admin")
 def kick_user(data):
-    logging.info("Admin requested to kick user:", data)
+    logging.info("admin requested kick:", data)
     kick_guest(data["user"])
     socket.emit("kick", to=data["user"])
     socket.emit("updateManifest", get_room_manifest(), to="admin")
 
 @socket.on("ping", namespace="/admin")
 def ping_room(data):
-    logging.info("Admin requested to ping user:", data)
+    logging.info("admin requested ping:", data)
     guests = get_guests_in_room(int(data["room"]))
     for guest in guests:
         socket.emit("ping", to=guest)

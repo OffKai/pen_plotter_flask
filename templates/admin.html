@@ -1,0 +1,134 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+<div class="fixed-grid has-1-cols m-5">
+    <div class="grid">
+        <div class="cell">
+            <div class="hero is-small">
+                <div class="hero-body">
+                    <p class="title has-text-centered">Pen Plotter Admin Panel</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cell">
+            <h2 class="subtitle">Connected Users</h2>
+            <div class="columns">
+                <div class="column">
+                    <article class="message">
+                        <div class="message-header">
+                            <p>Waiting Room</p>
+                        </div>
+                        <div class="message-body">
+                            <ul class="no-bullets" id="waiting">
+                            </ul>
+                        </div>
+                    </article>
+                </div>
+                <div class="column">
+                    <article class="message">
+                        <div class="message-header">
+                            <p>M&G Room</p>
+                        </div>
+                        <div class="message-body">
+                            <ul class="no-bullets" id="room1">
+                            </ul>
+                        </div>
+                    </article>
+                </div>
+                <!-- <div class="column">
+                    <article class="message">
+                        <div class="message-header">
+                            <p>Room 2</p>
+                        </div>
+                        <div class="message-body">
+                            <ul class="no-bullets" id="room2"></ul>
+                        </div>
+                    </article>
+                </div>
+                <div class="column">
+                    <article class="message">
+                        <div class="message-header">
+                            <p>Room 3</p>
+                        </div>
+                        <div class="message-body">
+                            <ul class="no-bullets" id="room3"></ul>
+                        </div>
+                    </article>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="cell">
+            <div class="block"></div>
+        </div>
+
+        <div class="cell">
+            <h2 class="subtitle">Manage User</h2>
+            <div class="fixed-grid has-1-cols">
+                <div class="grid">
+                    <div class="cell">
+                        <div class="block">
+                            <datalist id="user-list">
+                                {% for guest in guests %}
+                                <option value="{{guest.name}}"></option>
+                                {% endfor %}
+                            </datalist>
+                            <form>
+                                <input class="input is-fullwidth" list="user-list" id="user" name="user"
+                                    autocomplete="off" placeholder="Type or click on a username" />
+                            </form>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="columns">
+                            <div class="column">
+                                <button class="button is-fullwidth" id="move0">Move to
+                                    waiting
+                                    room</button>
+                            </div>
+                            <div class="column">
+                                <button class="button is-fullwidth" id="move1">Move to M&G room
+                                </button>
+                            </div>
+                            <!-- <div class="column">
+                                <button class="button is-fullwidth" id="move2">Move to room
+                                    2</button>
+                            </div>
+                            <div class="cell">
+                                <button class="button is-fullwidth" id="move3">Move to room
+                                    3</button>
+                            </div> -->
+                            <div class="column">
+                                <button class="button is-fullwidth" id="invite">Generate new invite link</button>
+                            </div>
+                            <div class="column">
+                                <button class="button is-fullwidth" id="kick">Disconnect</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="cell">
+                        <div class="columns1">
+                            <div class="column">
+                                <button class="button is-fullwidth" id="ping0">Ping waiting room</button>
+                            </div>
+                            <div class="column">
+                                <button class="button is-fullwidth" id="ping1">Ping room 1</button>
+                            </div>
+                            <div class="column">
+                                <button class="button is-fullwidth" id="ping2">Ping room 2</button>
+                            </div>
+                            <div class="column">
+                                <button class="button is-fullwidth" id="ping3">Ping room 3</button>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="chat"></div>
+{% endblock %}
