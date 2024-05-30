@@ -105,8 +105,8 @@ def get_guests_in_room(room_index):
 #
 # DEBUG
 #
-def print_guest_list():
-    print("all:", all_guests)
-    print("slugs:", invites)
-    print("authed:", authed_guests)
-    print("rooms:", get_room_manifest())
+# def print_guest_list():
+#     print("all:", all_guests)
+#     print("slugs:", invites)
+#     print("authed:", authed_guests)
+#     print("rooms:", get_room_manifest())

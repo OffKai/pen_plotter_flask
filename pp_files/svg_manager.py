@@ -45,9 +45,7 @@ def load_all_svgs_as_zip_stream_fs(guest_name=""):
     return zip_stream
 
 def save_svg_obj_store(guest_name, svg_content):
-    print(guest_name, len(str(svg_content)))
     raise RuntimeError("NOT IMPLEMENTED")
 
 def load_svg_obj_store(guest_name):
-    print(guest_name)
     raise RuntimeError("NOT IMPLEMENTED")

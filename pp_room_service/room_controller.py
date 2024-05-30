@@ -1,5 +1,6 @@
 from flask_socketio import join_room
 from flask_httpauth import HTTPDigestAuth
+import logging
 import yaml
 
 from app import app, socket
@@ -32,19 +33,19 @@ def verify_admin(username):
 #
 @socket.on("connect")
 def user_connect(auth):
-    print("A user connected")
+    logging.info("A user connected")
     if auth is None or "token" not in auth:
-        print("Illegal user auth", auth)
+        logging.info("Illegal user auth", auth)
         return False
     elif is_user_token(auth["token"]):
         handle_user_connect(auth["token"])
     else:
-        print("User failed to auth")
+        logging.info("User failed to auth")
         return False
 
 def handle_user_connect(token):
     guest = get_authed_guest(token)
-    print("User connected: ", guest.name)
+    logging.info("User connected: ", guest.name)
     if guest is None:
         join_room("unauthed... this should never happen")
     user = guest.name
@@ -62,35 +63,34 @@ def print_svg(data):
 #
 @socket.on("connect", namespace="/admin")
 def admin_connect(auth):
-    print("An admin connected")
+    logging.info("An admin connected")
     if auth is None or "token" not in auth:
-        print("Illegal admin auth")
+        logging.info("Illegal admin auth")
         return False
     elif is_admin_token(auth["token"]):
-        print("Admin connected")
+        logging.info("Admin connected")
         join_room("admin")
     else:
-        print("Admin failed to auth")
+        logging.info("Admin failed to auth")
         return False
 
 @socket.on("move", namespace="/admin")
 def move_user(data):
-    print("Admin requested to move user:", data)
+    logging.info("Admin requested to move user:", data)
     move_guest_to_room(data["user"], data["to"])
     socket.emit("move", (data["to"] != 0), to=data["user"])
     socket.emit("updateManifest", get_room_manifest(), to="admin")
 
 @socket.on("kick", namespace="/admin")
 def kick_user(data):
-    print("Admin requested to kick user:", data)
+    logging.info("Admin requested to kick user:", data)
     kick_guest(data["user"])
     socket.emit("kick", to=data["user"])
     socket.emit("updateManifest", get_room_manifest(), to="admin")
-    print(get_room_manifest())
 
 @socket.on("ping", namespace="/admin")
 def ping_room(data):
-    print("Admin requested to ping user:", data)
+    logging.info("Admin requested to ping user:", data)
     guests = get_guests_in_room(int(data["room"]))
     for guest in guests:
         socket.emit("ping", to=guest)

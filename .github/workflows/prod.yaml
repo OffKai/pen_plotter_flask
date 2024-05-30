@@ -1,4 +1,4 @@
-name: Push to prod instances plotter*
+name: Push to prod instances gen3 plotter*
 on: [workflow_dispatch]
 
 permissions:
@@ -18,11 +18,29 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Build and deploy to plotter-gen3
+      - name: Build and deploy to plotter1-gen3
         uses: azure/container-apps-deploy-action@v1
         with:
           appSourcePath: ${{ github.workspace }}
           acrName: offkai
-          containerAppName: plotter-gen3
+          containerAppName: plotter1-gen3
+          resourceGroup: plotter
+          imageToBuild: offkai.azurecr.io/plotter:${{ github.sha }}
+
+      - name: Build and deploy to plotter2-gen3
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          appSourcePath: ${{ github.workspace }}
+          acrName: offkai
+          containerAppName: plotter2-gen3
+          resourceGroup: plotter
+          imageToBuild: offkai.azurecr.io/plotter:${{ github.sha }}
+      
+      - name: Build and deploy to plotter3-gen3
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          appSourcePath: ${{ github.workspace }}
+          acrName: offkai
+          containerAppName: plotter3-gen3
           resourceGroup: plotter
           imageToBuild: offkai.azurecr.io/plotter:${{ github.sha }}
