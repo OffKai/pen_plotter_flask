@@ -6,7 +6,7 @@ from pp_config.secrets import get_secret
 from pp_files.svg_manager import load_all_svgs_as_zip_stream_fs
 
 auth = HTTPDigestAuth()
-auth_users = yaml.safe_load(str(get_secret("admin_auth")))
+auth_users = yaml.safe_load(str(get_secret("admin_credentials")))
 
 bp = Blueprint('printer', __name__, url_prefix='/printer')
 

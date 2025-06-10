@@ -6,10 +6,10 @@
     <div class="grid grid-cols-2 md:grid-cols-3 gap-4 overflow-scroll">
 
         {% for g in guest_data %}
-            <figure class="max-w-xs">
-                <img class="h-auto max-w-xs rounded-lg" src="/static/images/guest_templates/{{g.front_image}}" alt="">
-                <figcaption class="mt-2 text-sm text-center text-white">{{g.name}}</figcaption>
-            </figure>
+        <figure class="max-w-xs">
+            <img class="h-auto max-w-xs rounded-lg" src="/static/images/cards/{{g.card_image_filename}}" alt="">
+            <figcaption class="mt-2 text-sm text-center text-white">{{g.name}}</figcaption>
+        </figure>
         {% endfor %}
 
     </div>

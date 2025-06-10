@@ -850,19 +850,15 @@ class App {
         const cookiesArray = decodeURIComponent(document.cookie).split("; ")
         cookiesArray.forEach((cookie) => {
             let cookiePieces = cookie.split("=")
-            if (cookiePieces[0] === "front_template_filename") {
-                this.frontTemplateFilename = cookiePieces[1].slice(1, -1)
-                this.background.src = "/static/images/guest_templates/" + this.frontTemplateFilename
-            }
-            else if (cookiePieces[0] === "back_template_filename") {
-                this.backTemplateFilename = cookiePieces[1].slice(1, -1)
+            if (cookiePieces[0] === "card_image_filename") {
+                this.cardImageFilename = cookiePieces[1]
+                this.background.src = "/static/images/cards/" + this.cardImageFilename
             }
             else if (cookiePieces[0] === "template_orientation" && cookiePieces[1] === "h") {
                 this.orient = Orient.Landscape
             }
         })
 
-        this.setCanvasPenColor("#000000")
         this.resizeCanvas()
 
         this.tool = Tool.Draw
@@ -875,6 +871,7 @@ class App {
 
         this.addEventListeners()
         registerModalListeners()
+        this.setCanvasPenColor("#b89865")
 
         window.requestAnimationFrame(() => this.redraw())
     }

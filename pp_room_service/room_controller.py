@@ -17,7 +17,7 @@ from pp_room_service.guest_list import (
 )
 
 auth = HTTPDigestAuth()
-auth_users = yaml.safe_load(str(get_secret("admin_auth")))
+auth_users = yaml.safe_load(str(get_secret("admin_credentials")))
 
 def is_admin_token(token):
     return token == get_secret("admin_token")
