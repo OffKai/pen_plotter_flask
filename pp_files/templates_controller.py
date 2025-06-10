@@ -34,12 +34,11 @@ bp = Blueprint("templates_controller", __name__)
 # expected csv formatting:
 #
 # 0: name                # OK to include whitespace, capitalization, and periods; replace accents / avoid commas
-# 1: filename of front   # can be blank; one talent in 2024 should have no associated card images
-# 2: filename of back    # same ^
-# 3: day                 # encoded as {0, 1, 2, 3}, representing friday saturday sunday or no plotter usage, respectively
-# 4: is group?           # encoded as 0 or 1, for solo session and group session, respectively
-# 5: group code          # '' or a number 0 to 3; only applies to multiple talents sharing the same session
-# 6: orientation         # encoded as {'h', 'v', ''} for whether the image is portrait landscape or n/a, respectively
+# 1: filename            # can be blank; one talent in 2024 should have no associated card images
+# 2: day                 # encoded as {0, 1, 2, 3}, representing friday saturday sunday or no plotter usage, respectively
+# 3: is group?           # encoded as 0 or 1, for solo session and group session, respectively
+# 4: group code          # '' or a number 0 to 3; only applies to multiple talents sharing the same session
+# 5: orientation         # encoded as {'h', 'v', ''} for whether the image is portrait landscape or n/a, respectively
 #
 # - no header row
 # - all conversion of types is handled within the scope of the Guest class constructor
@@ -52,13 +51,13 @@ def load_templates():
     with open(data_path) as fp:
         for line in fp:
             cells = line.split(",")
-            add_guest_to_guest_list(Guest(i, cells[0], cells[1], cells[2], cells[3], cells[4], cells[5], cells[6]))
+            add_guest_to_guest_list(Guest(i, cells[0], cells[1], cells[2], cells[3], cells[4], cells[5]))
             i += 1
 
 load_templates()
 
 auth = HTTPDigestAuth()
-auth_users = yaml.safe_load(str(get_secret("admin_auth")))
+auth_users = yaml.safe_load(str(get_secret("admin_credentials")))
 
 @auth.get_password
 def verify_admin(username):
@@ -115,8 +114,7 @@ def login_with_invite_link(invite_code):
 
     resp = make_response(redirect("/"))
     resp.set_cookie("auth_id", auth_id, max_age=604800, path="/")
-    resp.set_cookie("front_template_filename", guest.front_image, max_age=604800, path="/")
-    resp.set_cookie("back_template_filename", guest.back_image, max_age=604800, path="/")
+    resp.set_cookie("card_image_filename", guest.card_image_filename, max_age=604800, path="/")
     resp.set_cookie("template_orientation", guest.orientation, max_age=604800, path="/")
     return resp
 
@@ -131,7 +129,6 @@ def logout():
 
     resp = make_response(redirect("/"))
     resp.set_cookie("auth_id", "", max_age=0, path="/")
-    resp.set_cookie("front_template_filename", "", max_age=0, path="/")
-    resp.set_cookie("back_template_filename", "", max_age=0, path="/")
+    resp.set_cookie("card_image_filename", "", max_age=0, path="/")
     resp.set_cookie("template_orientation", "", max_age=0, path="/")
     return resp

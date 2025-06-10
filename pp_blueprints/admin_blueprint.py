@@ -9,7 +9,7 @@ from pp_room_service.guest_list import get_room_manifest, get_guests_for_day
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 auth = HTTPDigestAuth()
-auth_users = yaml.safe_load(str(get_secret("admin_auth")))
+auth_users = yaml.safe_load(str(get_secret("admin_credentials")))
 
 @auth.get_password
 def get_admin(username):

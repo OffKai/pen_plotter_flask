@@ -17,11 +17,10 @@ class User(UserMixin):
 
 class Guest:
     # all inputs are string split, so do all type conversions here
-    def __init__(self, id, name, front_image, back_image, day, is_group, group_code, orientation):
+    def __init__(self, id, name, card_image_filename, day, is_group, group_code, orientation):
         self._id = id
         self._name = name
-        self._front_image = front_image
-        self._back_image = back_image
+        self._card_image_filename = card_image_filename
         self._day = int(day)
         self._is_group = (is_group == "1")
         if group_code == "":
@@ -52,20 +51,12 @@ class Guest:
         self._name = name
 
     @property
-    def front_image(self):
-        return self._front_image
+    def card_image_filename(self):
+        return self._card_image_filename
 
-    @front_image.setter
-    def front_image(self, front_image):
-        self._front_image = front_image
-
-    @property
-    def back_image(self):
-        return self._back_image
-
-    @back_image.setter
-    def back_image(self, back_image):
-        self._back_image = back_image
+    @card_image_filename.setter
+    def card_image_filename(self, card_image_filename):
+        self._card_image_filename = card_image_filename
 
     @property
     def day(self):
