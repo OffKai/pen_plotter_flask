@@ -859,7 +859,6 @@ class App {
             }
         })
 
-        this.setCanvasPenColor("#b89865")
         this.resizeCanvas()
 
         this.tool = Tool.Draw
@@ -872,6 +871,7 @@ class App {
 
         this.addEventListeners()
         registerModalListeners()
+        this.setCanvasPenColor("#b89865")
 
         window.requestAnimationFrame(() => this.redraw())
     }
