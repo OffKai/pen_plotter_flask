@@ -20,10 +20,6 @@ def svg_meta_to_file_name(guest_name, version=None):
     svg_version = guest_versions[guest_name] if version is None else version
     return get_config()["svgRoot"] + str(guest_name) + "_" + str(svg_version) + ".svg"
 
-def svg_meta_to_file_name(guest_name, version=None):
-    svg_version = guest_versions[guest_name] if version is None else version
-    return get_config()["svgRoot"] + str(guest_name) + "_" + str(svg_version) + ".svg"
-
 def save_svg_fs(guest_name, svg_content):
     increment_guest_version(guest_name)
     filename = svg_meta_to_file_name(guest_name)
