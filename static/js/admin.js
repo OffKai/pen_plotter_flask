@@ -96,6 +96,31 @@ function kickUser() {
     }
 };
 
+function dumpUserSvgCache() {
+    let user = document.getElementById("user").value;
+    if (user != "") {
+        fetch(`/printer/svgs/${user}`)
+            .then(resp => resp.blob())
+            .then(blob => {
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = `${user}_svgs.zip`;
+                link.click();
+            })
+            .catch(console.error);
+    } else {
+        fetch(`/printer/svgs`)
+            .then(resp => resp.blob())
+            .then(blob => {
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = "all_svgs.zip";
+                link.click();
+            })
+            .catch(console.error);
+    }
+}
+
 function pingRoom(roomIndex) {
     if (roomIndex < ROOMS.length) {
         console.log(`pinging room ${roomIndex}`);
@@ -194,6 +219,13 @@ addEventListener("DOMContentLoaded", () => {
     if (kick) {
         kick.addEventListener("click", () => {
             kickUser();
+        })
+    }
+
+    let svgs = document.getElementById("svgs");
+    if (svgs) {
+        svgs.addEventListener("click", () => {
+            dumpUserSvgCache();
         })
     }
 
