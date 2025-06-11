@@ -140,7 +140,7 @@ body {
     grid-template-rows: 2fr 1fr 20px 1fr 2fr;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-areas:
-        ". . ."
+        ". . toolbar"
         ". logo ."
         ". . ."
         "info info info"
@@ -149,6 +149,14 @@ body {
     background-image: url("/static/images/oke_simple_color_background.png");
     background-size: cover;
     background-repeat: no-repeat;
+}
+
+#landing-toolbar {
+    grid-area: toolbar;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
 }
 
 #landing-logo {

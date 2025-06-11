@@ -1,10 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
+<script src="{{ url_for('static', filename='js/landing.js') }}" type="module"></script>
 <div id="landing-grid">
     <div id="landing-logo">
         <img src="/static/images/oke_gen4_logo.png" />
     </div>
+
+    {% if get_username() == "" %}
+    {% else %}
+    <div id="landing-toolbar">
+        <button id="landing-canvas-button" class="button tbtn" title="Canvas">
+            <span>Canvas</span>
+        </button>
+    </div>
+    {% endif %}
 
     <div class="has-text-centered is-responsive" id="landing-info">
         <span class="is-size-3-desktop is-size-4-tablet is-size-5-mobile">
