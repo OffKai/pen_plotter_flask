@@ -10,6 +10,7 @@ from pp_room_service.guest_list import is_authentic_guest, get_authed_guest
 from pp_config.secrets import get_secret
 from pp_room_service.guest_list import (
     add_guest_to_waiting_room,
+    is_guest_in_waiting_room,
     move_guest_to_room,
     kick_guest,
     get_guests_in_room,
@@ -64,7 +65,17 @@ def handle_user_connect(token):
 
 @socket.on("print")
 def print_svg(data):
-    save_svg_fs(get_authed_guest(data["guest"]), data["svg"])
+    guest = get_authed_guest(data["guest"])
+    if guest is None:
+        logging.info("ignored print request from unknown user")
+        return
+    
+    if is_guest_in_waiting_room(guest.name):
+        logging.info(f"ignored print request from {guest.name} in waiting room")
+        return
+    
+    logging.info(f"print request from {guest.name}")
+    save_svg_fs(guest, data["svg"])
     socket.emit("plot", {"svg": data["svg"]}, namespace="/plotter", to="plotter")
 
 

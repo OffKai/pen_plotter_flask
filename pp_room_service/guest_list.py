@@ -1,3 +1,4 @@
+import logging
 import random
 import string
 import uuid
@@ -71,26 +72,30 @@ def get_authed_guest(auth_id: str):
 #
 # ROOM LOGIC
 #
-def is_guest_in_room(guest_name):
+def is_guest_in_any_room(guest_name):
     return guest_name in guest_rooms
+
+def is_guest_in_waiting_room(guest_name):
+    room_index = guest_rooms.get(guest_name)
+    return room_index is None or room_index == 0
 
 def add_guest_to_waiting_room(auth_id: str):
     global guest_rooms
 
     if is_authentic_guest(auth_id):
         guest = authed_guests[auth_id]
-        if not is_guest_in_room(guest.name):
-            # print("guest assigned to waiting room")
+        if not is_guest_in_any_room(guest.name):
+            logging.info("guest assigned to waiting room")
             guest_rooms[guest.name] = 0
 
     return
 
 def move_guest_to_room(guest_name, room_index):
     global guest_rooms
-    print("before move:", guest_rooms)
-    if is_guest_in_room(guest_name):
+    if is_guest_in_any_room(guest_name):
+        logging.info("rooms before move:", guest_rooms)
         guest_rooms[guest_name] = room_index
-        print("after move:", guest_rooms)
+        logging.info("rooms after move:", guest_rooms)
         return room_index
     
 def kick_guest(guest_name_or_auth_id):
